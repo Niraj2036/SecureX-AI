@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum userVisibility {
+  all
+  team
+  self
+}
+
+model user {
+  id           String    @id @default(cuid())
+  avatar       String?
+  tenantId     String?
+  name         String
+  email        String    @unique
+  phoneCode    String?
+  mobile       String?
+  teamId       String?
+  managerId    String?
+  orgUnit      String?
+  joiningDate  DateTime?
+  designation  String
+  status       status    @default(not_verified)
+  password     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  data         Json?
+  role         String?
+  departmentId String?
+  empId        String?
+  gender       String?
+  nationality  String?
+  dob          DateTime?
+  
+  checkInVisibility userVisibility @default(all)
+  oneOnOneVisibility userVisibility @default(all)
+  performanceVisibility userVisibility @default(all)
+
+  probationPeriodEnd    DateTime?
+  exitReason            String?
+  probationPeriod       String?
+  salary                String?
+  salaryCurrency        String?
+  linkedinURL           String?
+  
+  department            team?                   @relation("department", fields: [departmentId], references: [id])
+  manager               user?                   @relation("manager", fields: [managerId], references: [id])
+  employees             user[]                  @relation("manager")
+  company               company?                @relation(fields: [tenantId], references: [id])
+  adminAccess           adminAccess[]
+  otp                   otp[]
+  passwordResetToken    passwordResetToken[]
+  team                  team?                   @relation("team", fields: [teamId], references: [id])
+  notification          notification[]
+  teamLead              team?                   @relation("lead")
+
+  @@index([tenantId])
+}
+
+model session {
+  id           String         @id @default(cuid())
+  tenantId     String
+  title        String
+  description  String
+  startDate    DateTime
+  endDate      DateTime
+  cadence      cadence
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  company      company        @relation(fields: [tenantId], references: [id])
+}
+
+model company {
+  id              String        @id @default(cuid())
+  name            String
+  desc            String?
+  establishedDate DateTime?
+  streetAddress   String?
+  streetNo        Int?
+  city            String?
+  country         String?
+  zipCode         Int?
+  identifier      String?
+  currency        String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  vatNo           String?
+  language        String?
+  domain          String        @unique
+  website         String        @unique
+  billingEmail    String?
+  contactPerson   String?
+  logo            String?
+  whitelabel      Boolean?      @default(false)
+  employeeSize    employeeSize?
+  industry        industry?
+  userLimit       Int?
+
+  users                 user[]
+  teams                 team[]
+  sessions              session[]
+  adminAccess           adminAccess[]
+  passwordResetToken    passwordResetToken[]
+  otp                   otp[]
+  notification          notification[]
+}
+
+model notification {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String
+  message      String?
+  createdAt    DateTime @default(now())
+  isRead       Boolean  @default(false)
+  tenantId     String
+  link         String?
+
+  user      user         @relation(fields: [userId], references: [id])
+  tenant    company      @relation(fields: [tenantId], references: [id])
+}
+
+model team {
+  id              String           @id @default(cuid())
+  parentId        String?
+  name            String
+  leadId          String?          @unique
+  type            teamType
+  tenantId        String
+  departmentId    String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  parent          team?            @relation("Parent", fields: [parentId], references: [id])
+  subTeams        team[]           @relation("Parent")
+  company         company          @relation(fields: [tenantId], references: [id])
+  users           user[]           @relation("team")
+  departmentTeams team[]           @relation("dept")
+  deptUser        user[]           @relation("department")
+  lead            user?            @relation("lead", fields: [leadId], references: [id])
+  department      team?            @relation("dept", fields: [departmentId], references: [id])
+}
+
+enum teamType {
+  team
+  department
+}
+
+model adminAccess {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  company   company  @relation(fields: [tenantId], references: [id])
+  user      user     @relation(fields: [userId], references: [id])
+}
+
+model otp {
+  id         Int       @id @default(autoincrement())
+  tenantId   String
+  userEmail  String
+  otpValue   String
+  reason     String
+  expiryTime DateTime
+  status     otpStatus
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  
+  user       user      @relation(fields: [userEmail], references: [email])
+  company    company   @relation(fields: [tenantId], references: [id])
+}
+
+enum cadence {
+  one_month
+  three_month
+  six_month
+  one_year
+}
+
+enum status {
+  active
+  pending
+  not_verified
+  banned
+  deleted
+}
+
+enum employeeSize {
+  size_1_25
+  size_25_100
+  size_100_200
+  size_200_500
+  size_500Plus
+}
+
+enum orgUnit {
+  human_resource
+  product
+  engineering
+  sales_and_business
+  design_and_creative
+}
+
+enum industry {
+  healthcare_industry
+  financial_services_industry
+  manufacturing_industry
+  retail_industry
+}
+
+enum otpStatus {
+  active
+  expired
+  used
+}
+
+model passwordResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  tenantId  String
+  token     String   @unique
+  status    String   @default("unused")
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user    user    @relation(fields: [userId], references: [id])
+  company company @relation(fields: [tenantId], references: [id])
+}
+
+model division {
+  id          String             @id @default(cuid())
+  name        String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}

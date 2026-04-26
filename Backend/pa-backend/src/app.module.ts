@@ -1,4 +1,4 @@
-﻿import { AppController } from './app/app.controller';
+import { AppController } from './app/app.controller';
 import { AppService } from './app/app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { OauthModule } from './oauth/oauth.module';
+import { DocumentModule } from './document/document.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { OauthModule } from './oauth/oauth.module';
     NotificationModule,
     ScheduleModule.forRoot(),
     AdminModule,
-    OauthModule
+    OauthModule,
+    DocumentModule
   ],
   controllers: [AppController],
   providers: [PrismaService, AppService],

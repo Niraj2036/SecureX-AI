@@ -1650,4 +1650,128 @@ export class UsersService {
   }
 }
 
+  /**
+   * Returns the explicit structural hierarchy:
+   * Admins → Departments → Teams → Users
+   */
+  async getOrgStructure(tenantId: string) {
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        await prisma.$executeRaw`SELECT set_config('app.bypass_rls', 'on', TRUE)`;
+        await prisma.$executeRaw`SELECT set_config('app.tenant_id', ${tenantId}, TRUE)`;
+        await prisma.$executeRaw`SELECT set_config('app.bypass_rls', 'on', TRUE)`;
+
+        // 1. Fetch all admin-role users
+        const admins = await prisma.user.findMany({
+          where: { tenantId, role: 'admin' },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+            designation: true,
+            role: true,
+          },
+        });
+
+        // 2. Fetch all departments with their teams and users
+        const departments = await prisma.team.findMany({
+          where: { tenantId, type: 'department' },
+          include: {
+            // Department lead
+            lead: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatar: true,
+                designation: true,
+                role: true,
+              },
+            },
+            // Teams inside the department
+            departmentTeams: {
+              include: {
+                lead: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    avatar: true,
+                    designation: true,
+                    role: true,
+                  },
+                },
+                users: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    avatar: true,
+                    designation: true,
+                    role: true,
+                    teamId: true,
+                    departmentId: true,
+                  },
+                },
+              },
+            },
+            // Users directly in this dept (no team)
+            deptUser: {
+              where: { teamId: null },
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatar: true,
+                designation: true,
+                role: true,
+              },
+            },
+          },
+        });
+
+        // 3. Users with no dept and no team assignment (unassigned)
+        const unassignedUsers = await prisma.user.findMany({
+          where: {
+            tenantId,
+            departmentId: null,
+            teamId: null,
+            role: { notIn: ['admin'] },
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+            designation: true,
+            role: true,
+          },
+        });
+
+        return {
+          admins,
+          departments: departments.map((dept) => ({
+            id: dept.id,
+            name: dept.name,
+            lead: dept.lead,
+            teams: dept.departmentTeams.map((team) => ({
+              id: team.id,
+              name: team.name,
+              lead: team.lead,
+              users: team.users,
+            })),
+            directUsers: dept.deptUser,
+          })),
+          unassignedUsers,
+        };
+      });
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Error fetching organization structure',
+        error.status || 400,
+      );
+    }
+  }
+
 }

@@ -60,6 +60,9 @@ model user {
   team                  team?                   @relation("team", fields: [teamId], references: [id])
   notification          notification[]
   teamLead              team?                   @relation("lead")
+  uploadedDocuments     document[]              @relation("uploadedDocuments")
+  employeeDocuments     document[]              @relation("employeeDocuments")
+  documentAccess        documentAccess[]
 
   @@index([tenantId])
 }
@@ -110,6 +113,7 @@ model company {
   passwordResetToken    passwordResetToken[]
   otp                   otp[]
   notification          notification[]
+  documents             document[]
 }
 
 model notification {
@@ -145,6 +149,7 @@ model team {
   deptUser        user[]           @relation("department")
   lead            user?            @relation("lead", fields: [leadId], references: [id])
   department      team?            @relation("dept", fields: [departmentId], references: [id])
+  documentAccess  documentAccess[]
 }
 
 enum teamType {
@@ -241,4 +246,71 @@ model division {
   name        String
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
+}
+
+enum documentType {
+  offer_letter
+  id_proof
+  policy
+  nda
+  contract
+  payslip
+  other
+}
+
+enum accessPermission {
+  view
+  download
+  manage
+}
+
+enum accessTargetType {
+  user
+  team
+  department
+}
+
+model document {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+  type          documentType   @default(other)
+  fileUrl       String
+  publicId      String
+  fileName      String
+  fileSize      Int
+  mimeType      String
+  uploadedById  String
+  employeeId    String?
+  tenantId      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  uploadedBy    user           @relation("uploadedDocuments", fields: [uploadedById], references: [id])
+  employee      user?          @relation("employeeDocuments", fields: [employeeId], references: [id])
+  company       company        @relation(fields: [tenantId], references: [id])
+  access        documentAccess[]
+
+  @@index([tenantId])
+  @@index([uploadedById])
+  @@index([employeeId])
+}
+
+model documentAccess {
+  id          String           @id @default(cuid())
+  documentId  String
+  targetType  accessTargetType
+  userId      String?
+  teamId      String?
+  permission  accessPermission @default(view)
+  createdAt   DateTime         @default(now())
+
+  document    document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user        user?            @relation(fields: [userId], references: [id])
+  team        team?            @relation(fields: [teamId], references: [id])
+
+  @@unique([documentId, userId])
+  @@unique([documentId, teamId])
+  @@index([userId])
+  @@index([teamId])
 }

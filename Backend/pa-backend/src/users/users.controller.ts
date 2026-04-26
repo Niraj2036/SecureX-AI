@@ -120,6 +120,28 @@ export class UsersController {
       );
     }
   }
+  @UseGuards(AuthGuard)
+  @Get('org-structure')
+  async getOrgStructure(@Req() req: any) {
+    try {
+      const data = await this.usersService.getOrgStructure(req.user.tenantId);
+      return {
+        statusCode: 200,
+        message: 'Fetched org structure successfully',
+        data,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          statusCode: error.status || 400,
+          message: error.message || 'Error fetching org structure',
+          data: null,
+        },
+        error.status || 400,
+      );
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
@@ -292,6 +314,7 @@ export class UsersController {
       );
     }
   }
+
 }
 @Controller('company')
 export class companyController {

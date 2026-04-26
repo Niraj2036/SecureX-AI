@@ -1,4 +1,4 @@
-﻿import { auth } from "@/auth";
+import { auth } from "@/auth";
 import { AppSidebar } from "./app-sidebar";
 
 export default async function AppSidebarServer(props: any) {
@@ -27,6 +27,11 @@ export default async function AppSidebarServer(props: any) {
             },
           ]
         : []),
+      {
+        name: "Documents",
+        url: "/documents",
+        icon: "FileText",
+      },
     ],
     ...(userRole && userRole !== "employee" && {
       general: [

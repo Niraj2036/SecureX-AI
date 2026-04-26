@@ -6,6 +6,7 @@ import {
   BusFront,
   ChartNoAxesCombined,
   Cog,
+  FileText,
   GalleryVerticalEnd,
   Headset,
   LayoutDashboard,
@@ -65,6 +66,7 @@ const iconMap = {
   BusFront,
   GalleryVerticalEnd,
   MessageCircle,
+  FileText,
 };
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {

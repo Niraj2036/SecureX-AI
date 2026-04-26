@@ -1,0 +1,11 @@
+flask
+pymongo[srv]
+dnspython
+pydantic
+pymupdf
+python-docx
+spacy
+faker
+requests
+python-dotenv
+tiktoken

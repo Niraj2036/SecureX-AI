@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CloudinaryService } from './cloudinary.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateAccessDto } from './dto/update-access.dto';
+import axios from 'axios';
 
 @Injectable()
 export class DocumentService {
@@ -27,7 +28,7 @@ export class DocumentService {
     // Upload to Cloudinary
     const folder = `documents/${tenantId}`;
     const { url, publicId } = await this.cloudinary.uploadFile(file, folder);
-
+    console.log("File uploaded to Cloudinary")
     // Create document record
     const document = await this.prisma.document.create({
       data: {
@@ -65,6 +66,69 @@ export class DocumentService {
       },
     });
 
+    console.log("Document created successfully")
+    // Send to Python backend for RAG ingestion
+    try {
+  console.log("Sending to Python backend for RAG ingestion");
+
+  const accessData = {
+    employees: [userId],
+    teams: [],
+    depts: [],
+    roles: [],
+  };
+
+  if (dto.employeeId && dto.employeeId !== userId) {
+    accessData.employees.push(dto.employeeId);
+  }
+
+  if (dto.access && dto.access.length > 0) {
+    for (const entry of dto.access) {
+      if (entry.targetType === 'user' && !accessData.employees.includes(entry.userId)) {
+        accessData.employees.push(entry.userId);
+      } else if (entry.targetType === 'team') {
+        accessData.teams.push(entry.teamId);
+      } else if (entry.targetType === 'department') {
+        accessData.depts.push(entry.teamId);
+      }
+    }
+  }
+
+  const uploader = await this.prisma.user.findUnique({ where: { id: userId } });
+  const pythonUrl = process.env.PYTHON_BACKEND_URL || 'http://127.0.0.1:5000';
+
+  const response = await axios.post(`${pythonUrl}/ingest`, {
+    user_details: {
+      id: userId,
+      orgId: tenantId,
+      role: uploader?.role || 'user',
+      teamId: uploader?.teamId || '',
+      deptId: uploader?.departmentId || ''
+    },
+    documents: [{
+      name: document.fileName,
+      url: document.fileUrl,
+      access: accessData
+    }]
+  });
+
+  // ✅ PRINT RESPONSE
+  console.log("Status:", response.status);
+  console.log("Status Text:", response.statusText);
+  console.log("Data:", response.data);
+
+  console.log("Python ingestion triggered");
+
+} catch (error) {
+  console.log('Failed to trigger Python ingestion:', error.message);
+
+  // 🔥 EXTRA DEBUG (very useful)
+  if (error.response) {
+    console.log("Error Status:", error.response.status);
+    console.log("Error Data:", error.response.data);
+  }
+}
+    
     return document;
   }
 

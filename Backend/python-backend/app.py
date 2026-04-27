@@ -80,10 +80,13 @@ def query():
             answer = "You do not have authorized data to answer the question."
             chunks = []
         else:
-            # 2. Embed the question
+            # 2. Anonymize query and embed
+            from pipeline.anonymizer import anonymize_query, deanonymize_text
+            anonymized_question = anonymize_query(question)
+            
             req_id = f"query_{uuid.uuid4().hex[:8]}"
             # embed_texts expects a list and returns a list of embeddings
-            question_embeddings = embed_texts([question], req_id)
+            question_embeddings = embed_texts([anonymized_question], req_id)
             if not question_embeddings:
                 raise ValueError("Failed to embed the question.")
             question_embedding = question_embeddings[0]
@@ -91,9 +94,10 @@ def query():
             # 3. Retrieve chunks with vector search (filtered by access)
             chunks = retrieve_chunks(question_embedding, authorized_doc_ids, limit=5)
             
-            # 4. Generate answer
+            # 4. Generate answer and de-anonymize
             from pipeline.llm import generate_answer
-            answer = generate_answer(question, chunks)
+            raw_answer = generate_answer(anonymized_question, chunks)
+            answer = deanonymize_text(raw_answer)
             
         # 5. Log audit
         from pipeline.auditor import log_query
@@ -113,6 +117,24 @@ def query():
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
+
+
+@app.route("/audits/<user_id>", methods=["GET"])
+def get_audits(user_id):
+    try:
+        from db.mongo import get_audit_collection
+        col = get_audit_collection()
+        
+        # Fetch audits for this specific user ID
+        audits = list(col.find(
+            {"user_details.id": user_id},
+            {"_id": 0}
+        ).sort("timestamp", -1))
+        
+        return jsonify({"audits": audits}), 200
+    except Exception as e:
+        logger.exception("Failed to fetch audits")
+        return jsonify({"error": "Failed to fetch audits", "details": str(e)}), 500
 
 
 if __name__ == "__main__":

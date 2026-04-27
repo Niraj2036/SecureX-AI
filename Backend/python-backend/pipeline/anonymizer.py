@@ -56,3 +56,43 @@ def _get_or_create_pseudonym(original_name: str) -> str:
     })
 
     return pseudonym
+
+def anonymize_query(query_text: str) -> str:
+    """Replaces original names in the query with their pseudonyms from the DB."""
+    col = get_pseudonyms_collection()
+    # Fetch all, sort by length of original_name descending to replace longer matches first
+    all_pseudos = list(col.find({}, {"original_name": 1, "pseudonym": 1, "_id": 0}))
+    all_pseudos.sort(key=lambda x: len(x["original_name"]), reverse=True)
+    
+    anonymized = query_text
+    for p in all_pseudos:
+        # Simple string replacement (case-sensitive for exact name matches)
+        anonymized = anonymized.replace(p["original_name"], p["pseudonym"])
+        
+    return anonymized
+
+import re
+
+def deanonymize_text(text: str) -> str:
+    """Finds PERSON_N pseudonyms in text and replaces them with the original names."""
+    if not text:
+        return text
+        
+    col = get_pseudonyms_collection()
+    
+    # Find all unique PERSON_N matches in the text
+    matches = set(re.findall(r"PERSON_\d+", text))
+    
+    if not matches:
+        return text
+        
+    # Fetch original names from DB for those matches
+    pseudos = list(col.find({"pseudonym": {"$in": list(matches)}}))
+    pseudo_map = {p["pseudonym"]: p["original_name"] for p in pseudos}
+    
+    deanonymized = text
+    # Replace starting with longest string or just replace directly
+    for pseudo, original in pseudo_map.items():
+        deanonymized = deanonymized.replace(pseudo, original)
+        
+    return deanonymized

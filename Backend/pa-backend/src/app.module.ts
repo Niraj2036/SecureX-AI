@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { OauthModule } from './oauth/oauth.module';
 import { DocumentModule } from './document/document.module';
+import { RagModule } from './rag/rag.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { DocumentModule } from './document/document.module';
     ScheduleModule.forRoot(),
     AdminModule,
     OauthModule,
-    DocumentModule
+    DocumentModule,
+    RagModule
   ],
   controllers: [AppController],
   providers: [PrismaService, AppService],

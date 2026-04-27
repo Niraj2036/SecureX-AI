@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 logger = logging.getLogger(__name__)
-LLM_ENDPOINT = os.getenv("LLM_ENDPOINT", "")
+FEATHERLESS_API_KEY = os.getenv("FEATHERLESS_API_KEY", "")
+LLM_ENDPOINT = os.getenv("LLM_ENDPOINT", "https://api.featherless.ai/v1/chat/completions")
 
 def generate_answer(question: str, context_chunks: list) -> str:
     if not context_chunks:
@@ -25,33 +26,36 @@ QUESTION:
 {question}
 """
 
-    if not LLM_ENDPOINT:
-        logger.warning("LLM_ENDPOINT not set. Returning prompt instead of calling LLM.")
-        return f"[MOCK LLM RESPONSE - Set LLM_ENDPOINT to connect to real model]\n\nBased on the context, here is the answer to: {question}"
+    if not FEATHERLESS_API_KEY:
+        logger.warning("FEATHERLESS_API_KEY not set. Returning prompt instead of calling LLM.")
+        return f"[MOCK LLM RESPONSE - Set FEATHERLESS_API_KEY to connect to real model]\n\nBased on the context, here is the answer to: {question}"
 
     try:
-        # Assuming a standard chat completion payload format like OpenAI's API.
-        # This may need to be adjusted based on the specific LLM endpoint being used.
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {FEATHERLESS_API_KEY}"
+        }
+        
         payload = {
+            "model": "google/gemma-4-31B-it",
             "messages": [
                 {"role": "system", "content": "You are a secure AI assistant. Answer using only the provided context."},
                 {"role": "user", "content": prompt}
             ],
-            "temperature": 0.0
+            "presence_penalty": 0.5,
+            "frequency_penalty": 0.5,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "max_tokens": 500  # increased to 500 for better answers, but matching other parameters
         }
-        
-        response = requests.post(LLM_ENDPOINT, json=payload, timeout=60)
+
+        response = requests.post(LLM_ENDPOINT, headers=headers, json=payload, timeout=60)
         response.raise_for_status()
         
         data = response.json()
         
-        # Standard OpenAI response format
         if "choices" in data and len(data["choices"]) > 0:
             return data["choices"][0]["message"]["content"]
-            
-        # Fallback if the format is different (e.g. huggingface or custom)
-        if "generated_text" in data:
-            return data["generated_text"]
             
         return str(data)
         

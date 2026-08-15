@@ -1,65 +1,53 @@
-import { Button } from "../ui/button";
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Building2, Users, Bell, User } from "lucide-react";
+import clsx from "clsx";
 
 const OkrAdminSideBar = () => {
   const pathname = usePathname();
   return (
-    <>
-      <Link href="/setting/admin" passHref>
-        <Button
-          className={`bg-white w-full text-black rounded-lg py-2 justify-start hover:bg-muted hover:text-indigo-600`}
+    <div className="flex flex-col space-y-1">
+      <Link href="/setting/admin">
+        <div
+          className={clsx(
+            "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-indigo-600",
+            pathname === "/setting/admin"
+              ? "bg-indigo-500/10 text-indigo-600 font-semibold"
+              : "text-muted-foreground"
+          )}
         >
-          <Image
-            src={"/settings/manage.png"}
-            width={16}
-            height={16}
-            alt="Manage"
-            className="w-4"
-          />
+          <Building2 className="h-4 w-4" />
           Manage Organization
-        </Button>
+        </div>
       </Link>
-      <Link href="/setting/admin/users" passHref>
-        <Button
-          className={`bg-white w-full text-black rounded-lg mt-2 py-2 justify-start hover:bg-muted hover:text-indigo-600`}
+      <Link href="/setting/admin/users">
+        <div
+          className={clsx(
+            "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-indigo-600",
+            pathname === "/setting/admin/users"
+              ? "bg-indigo-500/10 text-indigo-600 font-semibold"
+              : "text-muted-foreground"
+          )}
         >
-          <Image
-            src={"/settings/users.png"}
-            width={16}
-            height={16}
-            alt="users"
-            className="w-4 mr-2"
-          />
+          <Users className="h-4 w-4" />
           Users Management
-        </Button>
+        </div>
       </Link>
-      <Button
-        className={`bg-white w-full text-black rounded-lg mt-2 py-2 justify-start hover:bg-muted hover:text-indigo-600`}
+      <div
+        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-indigo-600 cursor-pointer"
       >
-        <Image
-          src={"/settings/notifications.png"}
-          alt="notification"
-          width={16}
-          height={16}
-          className="w-4"
-        />
+        <Bell className="h-4 w-4" />
         Notifications
-      </Button>
-      <Button
-        className={`bg-white w-full text-black rounded-lg mt-2 py-2 justify-start hover:bg-muted hover:text-indigo-600`}
+      </div>
+      <div
+        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-indigo-600 cursor-pointer"
       >
-        <Image
-          src={"/settings/person.png"}
-          width={16}
-          height={16}
-          alt="person"
-          className="w-4"
-        />{" "}
+        <User className="h-4 w-4" />
         Manage Account
-      </Button>
-    </>
+      </div>
+    </div>
   );
 };
 

@@ -1,10 +1,8 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Building2 } from "lucide-react";
 import { useState } from "react";
-import Image from "next/image";
-const company = "/auth/company.png";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -107,11 +105,7 @@ export default function RoleSelect() {
                     }}
                     className="flex items-center space-x-2"
                   >
-                    <Image width={28} height={28}
-                      src={company}
-                      alt="Company Logo"
-                      className="shrink-0 w-7 h-auto"
-                    />
+                    <Building2 className="h-4 w-4 text-indigo-600 shrink-0" />
                     <span>{framework.label}</span>
                     <Check
                       className={cn(

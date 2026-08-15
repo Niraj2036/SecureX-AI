@@ -9,9 +9,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import Image from "next/image";
-const add = "/settings/add.png";
-
 import {
   Select,
   SelectContent,

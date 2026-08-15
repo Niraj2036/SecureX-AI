@@ -20,7 +20,7 @@ import {
   MiniMap,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Badge } from "@/components/ui/badge";
+
 import { Building2, Users, ShieldCheck, UserX, Network } from "lucide-react";
 import { V3PageHeader } from "@/components/v3/V3PageHeader";
 
@@ -71,9 +71,9 @@ function AdminNode({ data }: { data: any }) {
         <div>
           <p className="font-bold text-xs text-white leading-tight">{data.name}</p>
           <p className="text-[10px] text-indigo-200 leading-tight">{data.designation || "Administrator"}</p>
-          <Badge className="mt-1 bg-white/20 hover:bg-white/30 text-[9px] text-white border-0 px-1.5 py-0">
-            <ShieldCheck className="h-2.5 w-2.5 mr-1 inline" /> Admin
-          </Badge>
+          <span className="mt-1 inline-flex items-center rounded-full bg-white/20 px-1.5 py-0 text-[9px] text-white">
+            <ShieldCheck className="h-2.5 w-2.5 mr-1" /> Admin
+          </span>
         </div>
       </div>
     </div>
@@ -148,9 +148,9 @@ function UserNode({ data }: { data: any }) {
         </Link>
         {data.designation && <p className="text-[10px] text-muted-foreground mt-0.5">{data.designation}</p>}
         {data.role && (
-          <Badge variant="outline" className="mt-1 text-[9px] uppercase font-semibold px-1.5 py-0" style={{ borderColor: roleColor, color: roleColor }}>
+          <span className="mt-1 inline-flex items-center rounded-full border px-1.5 py-0 text-[9px] uppercase font-semibold" style={{ borderColor: roleColor, color: roleColor }}>
             {data.role.replace("_", " ")}
-          </Badge>
+          </span>
         )}
       </div>
     </div>

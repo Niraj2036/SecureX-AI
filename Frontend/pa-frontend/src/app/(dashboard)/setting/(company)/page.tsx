@@ -1,41 +1,9 @@
 "use client";
 
 import { CalendarDays, Loader2, Building } from "lucide-react";
-import {
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@radix-ui/react-popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import axios from "axios";
 import { cn } from "@/lib/utils";
 import currencyCodes from "currency-codes";
@@ -51,6 +19,9 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { V3Card } from "@/components/v3/V3Card";
+import { V3Button } from "@/components/v3/V3Button";
+import Image from "next/image";
+import { Calendar } from "@/components/ui/calendar";
 
 const companySchema = z.object({
   companyName: z.string().nonempty("Company Name is required"),
@@ -370,227 +341,110 @@ const SettingsPage = () => {
 
   return (
     <V3Card className="w-full max-w-4xl p-6">
-      <CardHeader className="p-0 pb-4">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <Building className="h-5 w-5 text-indigo-600" />
-          Company Identity / {companyName || "Organization"}
-        </CardTitle>
-      </CardHeader>
-      <Separator />
-      <CardContent className="p-0 pt-4">
+      <div className="p-0 pb-4 flex items-center gap-2">
+        <Building className="h-5 w-5 text-indigo-600" />
+        <h2 className="text-xl font-bold">Company Identity / {companyName || "Organization"}</h2>
+      </div>
+      <div className="border-t border-border/60 mb-4" />
+      <div className="p-0 pt-4">
         <FormProvider {...methods}>
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <section className="space-y-4">
               <h3 className="font-bold text-sm text-foreground">Company Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="companyName" className="text-xs font-semibold">
+                  <label className="text-xs font-semibold text-foreground block mb-1">
                     Company Name <span className="text-rose-500">*</span>
-                  </Label>
+                  </label>
                   <Controller
                     name="companyName"
                     control={control}
                     render={({ field }) => (
-                      <Input
+                      <input
                         {...field}
                         placeholder="Enter your company name"
                         disabled={userRole === "employee"}
-                        className="text-xs mt-1"
+                        className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted"
                       />
                     )}
                   />
                   {errors.companyName && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.companyName.message}
-                    </p>
+                    <p className="text-rose-500 text-[11px] mt-1">{errors.companyName.message}</p>
                   )}
                 </div>
                 <div>
-                  <FormField
-                    control={control}
+                  <label className="text-xs font-semibold text-foreground block mb-1">
+                    Incorporation Date <span className="text-rose-500">*</span>
+                  </label>
+                  <Controller
                     name="incorporationDate"
+                    control={control}
                     render={({ field }) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className="text-xs font-semibold">
-                          Incorporation Date <span className="text-rose-500">*</span>
-                        </FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full inline-flex items-center justify-start font-normal text-xs",
-                                  !field.value && "text-muted-foreground",
-                                  "h-9 px-3"
-                                )}
-                              >
-                                <CalendarDays className="mr-2 h-4 w-4 text-indigo-600" />
-                                {field.value ? (
-                                  moment(field.value).format("DD/MM/YYYY")
-                                ) : (
-                                  <span>DD/MM/YYYY</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            className="w-auto p-0"
-                            align="start"
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className={cn(
+                              "w-full h-9 inline-flex items-center justify-start px-3 text-xs rounded-lg border border-border/80 bg-background font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
                           >
-                            <Calendar
-                              className="bg-card shadow-lg rounded-lg border"
-                              mode="single"
-                              selected={
-                                field.value
-                                  ? new Date(field.value)
-                                  : undefined
-                              }
-                              onSelect={field.onChange}
-                              initialFocus
-                              disabled={userRole === "employee"}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage className="text-[11px]" />
-                      </FormItem>
+                            <CalendarDays className="mr-2 h-4 w-4 text-indigo-600" />
+                            {field.value ? moment(field.value).format("DD/MM/YYYY") : <span>DD/MM/YYYY</span>}
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-card shadow-lg rounded-lg border border-border z-50" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={field.onChange}
+                            initialFocus
+                            disabled={userRole === "employee"}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     )}
                   />
+                  {errors.incorporationDate && <p className="text-rose-500 text-[11px] mt-1">{String(errors.incorporationDate.message)}</p>}
                 </div>
 
                 <div>
-                  <Label htmlFor="streetAddress" className="text-xs font-semibold">
-                    Street Address <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="streetAddress"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Enter street address"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.streetAddress && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.streetAddress.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Street Address <span className="text-rose-500">*</span></label>
+                  <Controller name="streetAddress" control={control} render={({ field }) => (
+                    <input {...field} placeholder="Enter street address" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.streetAddress && <p className="text-rose-500 text-[11px] mt-1">{errors.streetAddress.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="streetNumber" className="text-xs font-semibold">
-                    Street Number <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="streetNumber"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(parseInt(e.target.value));
-                        }}
-                        value={field.value ?? ""}
-                        placeholder="Enter street number"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.streetNumber && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.streetNumber.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Street Number <span className="text-rose-500">*</span></label>
+                  <Controller name="streetNumber" control={control} render={({ field }) => (
+                    <input type="number" {...field} onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(parseInt(e.target.value))} value={field.value ?? ""} placeholder="Enter street number" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.streetNumber && <p className="text-rose-500 text-[11px] mt-1">{errors.streetNumber.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="city" className="text-xs font-semibold">
-                    City <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="city"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Enter city name"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.city && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.city.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">City <span className="text-rose-500">*</span></label>
+                  <Controller name="city" control={control} render={({ field }) => (
+                    <input {...field} placeholder="Enter city name" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.city && <p className="text-rose-500 text-[11px] mt-1">{errors.city.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="country" className="text-xs font-semibold">
-                    Country <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="country"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={userRole === "employee"}
-                      >
-                        <SelectTrigger className="w-full text-xs mt-1 h-9">
-                          <SelectValue placeholder="Select country name" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {data.map((country) => (
-                            <SelectItem
-                              key={country.code}
-                              value={country.code}
-                              className="text-xs"
-                            >
-                              {country.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.country && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.country.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Country <span className="text-rose-500">*</span></label>
+                  <Controller name="country" control={control} render={({ field }) => (
+                    <select value={field.value} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted">
+                      <option value="">Select country</option>
+                      {data.map((country) => <option key={country.code} value={country.code}>{country.name}</option>)}
+                    </select>
+                  )} />
+                  {errors.country && <p className="text-rose-500 text-[11px] mt-1">{errors.country.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="zipCode" className="text-xs font-semibold">
-                    Zip Code <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="zipCode"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(parseInt(e.target.value));
-                        }}
-                        value={field.value ?? ""}
-                        placeholder="Enter Zip Code"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.zipCode && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.zipCode.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Zip Code <span className="text-rose-500">*</span></label>
+                  <Controller name="zipCode" control={control} render={({ field }) => (
+                    <input type="number" {...field} onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(parseInt(e.target.value))} value={field.value ?? ""} placeholder="Enter Zip Code" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.zipCode && <p className="text-rose-500 text-[11px] mt-1">{errors.zipCode.message}</p>}
                 </div>
               </div>
             </section>
@@ -599,48 +453,18 @@ const SettingsPage = () => {
               <h3 className="font-bold text-sm text-foreground">Contact Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="billingEmail" className="text-xs font-semibold">
-                    Billing Email <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="billingEmail"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Enter Billing Email"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.billingEmail && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.billingEmail.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Billing Email <span className="text-rose-500">*</span></label>
+                  <Controller name="billingEmail" control={control} render={({ field }) => (
+                    <input {...field} placeholder="Enter Billing Email" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.billingEmail && <p className="text-rose-500 text-[11px] mt-1">{errors.billingEmail.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="contactPerson" className="text-xs font-semibold">
-                    Contact Person <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="contactPerson"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Enter Name of Contact Person"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.contactPerson && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.contactPerson.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Contact Person <span className="text-rose-500">*</span></label>
+                  <Controller name="contactPerson" control={control} render={({ field }) => (
+                    <input {...field} placeholder="Enter Name of Contact Person" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.contactPerson && <p className="text-rose-500 text-[11px] mt-1">{errors.contactPerson.message}</p>}
                 </div>
               </div>
             </section>
@@ -649,227 +473,91 @@ const SettingsPage = () => {
               <h3 className="font-bold text-sm text-foreground">Financial Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="currency" className="text-xs font-semibold">
-                    Currency <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="currency"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={userRole === "employee"}
-                      >
-                        <SelectTrigger className="w-full text-xs mt-1 h-9">
-                          <SelectValue placeholder="Select a currency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {currencyList.map((currency) => (
-                            <SelectItem
-                              key={currency.code}
-                              value={currency.code}
-                              className="text-xs"
-                            >
-                              {currency.code} - {currency.currency}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
+                  <label className="text-xs font-semibold text-foreground block mb-1">Currency <span className="text-rose-500">*</span></label>
+                  <Controller name="currency" control={control} render={({ field }) => (
+                    <select value={field.value} onChange={e => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted">
+                      <option value="">Select currency</option>
+                      {currencyList.map((c) => <option key={c.code} value={c.code}>{c.code} - {c.currency}</option>)}
+                    </select>
+                  )} />
                 </div>
                 <div>
-                  <Label htmlFor="vatNumber" className="text-xs font-semibold">
-                    Tax ID No. <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="vatNumber"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        placeholder="Enter VAT Number"
-                        disabled={userRole === "employee"}
-                        className="text-xs mt-1"
-                      />
-                    )}
-                  />
-                  {errors.vatNumber && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.vatNumber.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Tax ID No. <span className="text-rose-500">*</span></label>
+                  <Controller name="vatNumber" control={control} render={({ field }) => (
+                    <input {...field} placeholder="Enter VAT Number" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                  )} />
+                  {errors.vatNumber && <p className="text-rose-500 text-[11px] mt-1">{errors.vatNumber.message}</p>}
                 </div>
               </div>
             </section>
 
             <section className="space-y-4 pt-2">
-              <h3 className="font-bold text-sm text-foreground">Language & Branding</h3>
+              <h3 className="font-bold text-sm text-foreground">Language &amp; Branding</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col">
-                  <Label htmlFor="defaultLanguage" className="text-xs font-semibold">
-                    Default Language <span className="text-rose-500">*</span>
-                  </Label>
-                  <Controller
-                    name="defaultLanguage"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={userRole === "employee"}
-                      >
-                        <SelectTrigger className="w-full text-xs mt-1 h-9">
-                          <SelectValue placeholder="Select a Language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {languageOptions.map((language) => (
-                            <SelectItem
-                              key={language.code}
-                              value={language.code || language.name}
-                              className="text-xs"
-                            >
-                              {language.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.defaultLanguage && (
-                    <p className="text-rose-500 text-[11px] mt-1">
-                      {errors.defaultLanguage.message}
-                    </p>
-                  )}
+                  <label className="text-xs font-semibold text-foreground block mb-1">Default Language <span className="text-rose-500">*</span></label>
+                  <Controller name="defaultLanguage" control={control} render={({ field }) => (
+                    <select value={field.value} onChange={e => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted">
+                      <option value="">Select language</option>
+                      {languageOptions.map((lang) => <option key={lang.code} value={lang.code || lang.name}>{lang.name}</option>)}
+                    </select>
+                  )} />
+                  {errors.defaultLanguage && <p className="text-rose-500 text-[11px] mt-1">{errors.defaultLanguage.message}</p>}
                 </div>
 
                 <div className="flex flex-col">
-                  <Label htmlFor="logo" className="text-xs font-semibold mb-1">Company Logo</Label>
+                  <label className="text-xs font-semibold text-foreground block mb-1">Company Logo</label>
                   <div className="flex items-center gap-4 flex-wrap">
                     <div className="w-36 h-12 overflow-hidden border border-border/80 flex items-center justify-center bg-muted/40 rounded-lg">
                       {logoPreview ? (
-                        <Image
-                          src={logoPreview}
-                          width={144}
-                          height={48}
-                          alt="Logo preview"
-                          className="w-full h-full object-contain"
-                        />
+                        <Image src={logoPreview} width={144} height={48} alt="Logo preview" className="w-full h-full object-contain" />
                       ) : companyLogo ? (
-                        <Image
-                          src={companyLogo}
-                          width={144}
-                          height={48}
-                          alt="Company logo"
-                          className="w-full h-full object-contain"
-                        />
+                        <Image src={companyLogo} width={144} height={48} alt="Company logo" className="w-full h-full object-contain" />
                       ) : (
                         <div className="text-muted-foreground text-xs font-medium">No logo</div>
                       )}
                     </div>
-
-                    <input
-                      type="file"
-                      id="logo"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-
+                    <input type="file" id="logo" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                     <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="text-xs font-medium border-border/80"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        Select Logo
-                      </Button>
-
+                      <V3Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>Select Logo</V3Button>
                       {selectedFile && (
                         <>
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white"
-                            onClick={handleUpload}
-                            disabled={updateLogoMutation.isPending}
-                          >
-                            {updateLogoMutation.isPending ? (
-                              <>
-                                <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                                Uploading...
-                              </>
-                            ) : (
-                              "Upload"
-                            )}
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs"
-                            onClick={handleCancel}
-                            disabled={updateLogoMutation.isPending}
-                          >
-                            Cancel
-                          </Button>
+                          <V3Button type="button" size="sm" onClick={handleUpload} isLoading={updateLogoMutation.isPending}>
+                            {updateLogoMutation.isPending ? "Uploading..." : "Upload"}
+                          </V3Button>
+                          <V3Button type="button" variant="ghost" size="sm" onClick={handleCancel} disabled={updateLogoMutation.isPending}>Cancel</V3Button>
                         </>
                       )}
                     </div>
                   </div>
 
                   <div className="mt-4 flex items-center gap-2">
-                    <Switch
+                    <button
+                      type="button"
                       id="whitelabel"
-                      checked={whitelabel}
-                      onCheckedChange={(checked) => {
-                        setWhitelabel(checked);
-                        handleWhiteLabelMutation.mutate();
-                      }}
+                      role="switch"
+                      aria-checked={whitelabel}
+                      onClick={() => { setWhitelabel(!whitelabel); handleWhiteLabelMutation.mutate(); }}
                       disabled={userRole === "employee"}
-                    />
-                    <Label
-                      htmlFor="whitelabel"
-                      className="text-xs font-medium cursor-pointer"
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 ${whitelabel ? "bg-indigo-600" : "bg-muted-foreground/30"} disabled:opacity-50`}
                     >
-                      Enable White-labelling
-                    </Label>
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${whitelabel ? "translate-x-4" : "translate-x-0.5"}`} />
+                    </button>
+                    <label htmlFor="whitelabel" className="text-xs font-medium cursor-pointer">Enable White-labelling</label>
                   </div>
                 </div>
               </div>
             </section>
 
-            <CardFooter className="flex justify-end space-x-3 pt-4 border-t border-border/60 p-0">
-              <Button
-                variant="outline"
-                type="button"
-                className="text-xs font-medium"
-                disabled={userRole === "employee"}
-              >
-                Cancel
-              </Button>
-              <Button 
-                disabled={userRole === "employee" || patchMutation.isPending} 
-                type="submit"
-                className="text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                {patchMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Save Settings"
-                )}
-              </Button>
-            </CardFooter>
+            <div className="flex justify-end space-x-3 pt-4 border-t border-border/60">
+              <V3Button variant="outline" type="button" disabled={userRole === "employee"}>Cancel</V3Button>
+              <V3Button disabled={userRole === "employee" || patchMutation.isPending} type="submit" isLoading={patchMutation.isPending}>
+                {patchMutation.isPending ? "Saving..." : "Save Settings"}
+              </V3Button>
+            </div>
           </form>
         </FormProvider>
-      </CardContent>
+      </div>
     </V3Card>
   );
 };

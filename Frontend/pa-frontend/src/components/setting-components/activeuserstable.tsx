@@ -11,8 +11,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Image from "next/image";
-const profile = "/employee/profile.png";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import {

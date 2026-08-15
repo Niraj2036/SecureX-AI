@@ -1,24 +1,21 @@
-import ActionMenu from "@/components/three-dots";
-import Image from "next/image";
+import { Building } from "lucide-react";
 import { Handle, Position } from "reactflow";
 
 const DepartmentNode = ({ data }: any) => {
-    // console.log(data)
     return (
         <div
-            className="bg-white backdrop-blur-lg border transition-all duration-300 hover:shadow-xl hover:border-blue-400 w-[300px] rounded-2xl p-4 shadow-md text-center cursor-pointer"
+            className="bg-card backdrop-blur-lg border border-border/80 transition-all duration-300 hover:shadow-xl hover:border-violet-500/50 w-[280px] rounded-2xl p-4 shadow-md text-left cursor-pointer"
             onClick={()=>data.toggleTeams(data.id)}
         >
-            <div className="font-bold text-black flex justify-between items-center gap-2">
-                <div className="flex justify-center items-center gap-2">
-                    <Image src={"/settings/department.png"} width={25} height={25} alt="Company" />
+            <div className="font-bold text-foreground flex justify-between items-center gap-2">
+                <div className="flex items-center gap-2 text-sm">
+                    <div className="h-8 w-8 rounded-lg bg-violet-500/10 text-violet-600 flex items-center justify-center font-bold">
+                        <Building className="h-4 w-4" />
+                    </div>
                     {data.name}
                 </div>
-                <div>
-                    {/* <ActionMenu /> */}
-                </div>
             </div>
-            <div className="flex pl-8 font-semibold text-gray-500">
+            <div className="flex pt-2 font-semibold text-xs text-muted-foreground">
                 {data.users || "0"} Teams
             </div>
             <Handle type="target" position={Position.Left} />

@@ -1,332 +1,228 @@
 "use client";
 
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
 import axios from "axios";
-const filter = "/employee/filter.png";
-const profile = "/employee/profile.png";
-const sort = "/employee/sort.png";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Adminsheet from "@/components/setting-components/okradmin-navbarsheet";
-import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
-import { useDebounce } from "@/components/ui/multiselect";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import Inviteusers from "@/components/setting-components/invite-usersheet";
-import { Plus } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { Plus, Trash2, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import { V3PageHeader } from "@/components/v3/V3PageHeader";
+import { V3Card } from "@/components/v3/V3Card";
+import { V3Button } from "@/components/v3/V3Button";
 
-interface Team {
+interface Department {
   id: string;
   name: string;
-  parentId: string | null;
-  avatar?: string;
-}
-
-interface Employee {
-  id: string;
-  avatar: string | null;
-  tenantId: string;
-  name: string;
-  teamId: string | null;
-  managerId: string | null;
-  joiningDate: string | null;
-  createdAt: string;
-  updatedAt: string;
-  data: Record<string, any>;
-  role: string;
-  jobTitle?: string;
-  manager?: string;
-  company?: string;
   type: string;
-  department?: string;
-  users: Team | null;
+  avatar?: string | null;
+  parentId?: string | null;
 }
-const columns: ColumnDef<Employee>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-      />
-    ),
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Avatar className="mr-2">
-          <AvatarImage src={row.original.users?.avatar || undefined} alt={`${row.original.users?.name}'s avatar`} />
-          <AvatarFallback>
-            {row.original?.name[0]?.toUpperCase()}
-            {/* {row.original.users?.name[1].toUpperCase()} */}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col">
-          <span>{row.original.name}</span>
-        </div>
-      </div>
-    ),
-  },
-  { accessorKey: "designation", header: "Job Title" },
-  { accessorKey: "managerId", header: "Manager" },
-  // { accessorKey: "department", header: "Department" },
-  {
-    accessorKey: "team",
-    header: "Department",
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <div className="mr-2">{row.original.name || "No Team Assigned"}</div>
-      </div>
-    ),
-  },
-];
 
 const Department = () => {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-  const [paginationPages, setPaginationPages] = useState<number>(1);
-  const [currentPage, setCurrentPage] = useState<number>(1); // Track current page
-  const debouncedPage = useDebounce(currentPage, 300);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const { data: session } = useSession();
   const [totalDepartments, setTotalDepartments] = useState<number>(0);
+  const [paginationPages, setPaginationPages] = useState<number>(1);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const { data: teamData } = useQuery({
-    queryKey: ["teams", debouncedPage],
+  const { data: teamData, isLoading } = useQuery({
+    queryKey: ["departments", currentPage],
     queryFn: async () => {
       const response = await axios.get(`${backendUrl}/teams/dept?pageNo=${currentPage}`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.token}`,
-        },
+        headers: { Authorization: `Bearer ${session?.user.token}` },
       });
-      console.log(response.data);
       return response.data;
     },
+    enabled: !!session?.user?.token,
   });
+
   useEffect(() => {
-    if (teamData?.data.pagination) {
-      console.log(teamData, "rishi data consoled");
-      setTotalDepartments(teamData.data.pagination.totalTeams);
-      setPaginationPages(teamData.data.pagination.totalPages);
+    if (teamData?.data?.pagination) {
+      setTotalDepartments(teamData.data.pagination.totalTeams || 0);
+      setPaginationPages(teamData.data.pagination.totalPages || 1);
     }
-    console.log(teamData, "rishi data consoled");
   }, [teamData]);
 
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["teams"] });
-  }, [currentPage, queryClient]);
+  const departments: Department[] = (teamData?.data?.data || []).filter(
+    (d: Department) => d.type === "department"
+  );
 
-  const table = useReactTable({
-    data: teamData?.data.data || [],
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
-
-  const rowModel = table.getRowModel();
   const { mutate: deleteDepartment, status: deleteStatus } = useMutation({
     mutationFn: async (departmentId: string) => {
       return axios.delete(`${backendUrl}/teams/${departmentId}`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.token}`,
-        },
+        headers: { Authorization: `Bearer ${session?.user.token}` },
       });
     },
     onSuccess: (_, departmentId) => {
-      const deletedDepartment = rowModel?.rows.find(
-        (row) => row.original.id === departmentId
-      )?.original;
-      toast({
-        title: "Department deleted",
-        description: `You have deleted ${deletedDepartment?.name}`,
-        duration: 3000,
-      })
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
-      setRowSelection({});
+      const deleted = departments.find((d) => d.id === departmentId);
+      toast({ title: "Department deleted", description: `${deleted?.name} has been removed.`, duration: 3000 });
+      queryClient.invalidateQueries({ queryKey: ["departments"] });
+      setSelectedId(null);
     },
-    onError: (error) => {
-      toast({
-        title: "Error deleting department",
-        description: "There was an error deleting the department",
-        duration: 3000,
-      })
-      console.error("Error deleting department:", error);
-    }
+    onError: () => {
+      toast({ title: "Error deleting department", description: "Could not delete department.", duration: 3000 });
+    },
   });
 
-  const isDeleting = deleteStatus === 'pending';
-  const selectedRow = Object.keys(rowSelection)[0];
-  const selectedDepartment = rowModel?.rows.find(
-    (row) => row.id === selectedRow
-  )?.original; 
-  
-  return (
-    <Card className="w-full max-w-4xl  bg-white  shadow-sm">
-      <div className="w-full px-4">
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center">
-            <div className="w-7 rounded-full h-7 flex justify-center items-center text-white  bg-[#189D92] ml-2">
-              {totalDepartments}
-            </div>
-            <p className="ml-2 text-slate-600">Departments</p>
-          </div>
+  const isDeleting = deleteStatus === "pending";
+  const selectedDepartment = departments.find((d) => d.id === selectedId);
 
-          <div className="flex items-center">
-            <Adminsheet type="department" />
-            {selectedDepartment && (
-            <Button
-            variant="destructive"
-            onClick={() => deleteDepartment(selectedDepartment.id)} 
-            disabled={isDeleting}
+  return (
+    <div className="space-y-6">
+      <V3PageHeader
+        title="Departments"
+        description="Manage organizational departments and their membership."
+        badgeText={`${totalDepartments} Departments`}
+        badgeIcon={<Building2 className="h-3 w-3 text-indigo-600" />}
+      >
+        <div className="flex items-center gap-2">
+          {selectedDepartment && (
+            <V3Button
+              variant="danger"
+              onClick={() => deleteDepartment(selectedDepartment.id)}
+              isLoading={isDeleting}
             >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              Delete
+            </V3Button>
           )}
-            <Inviteusers>
-              <Button className=" bg-white text-slate-500 hover:bg-slate-200 border flex items-center space-x-2 mx-2">
-                <Plus/>
-                Add User 
-              </Button>
-            </Inviteusers>
+          <Adminsheet type="department">
+            <V3Button variant="outline">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add Department
+            </V3Button>
+          </Adminsheet>
+          <Inviteusers>
+            <V3Button>
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add User
+            </V3Button>
+          </Inviteusers>
+        </div>
+      </V3PageHeader>
+
+      <V3Card className="overflow-hidden p-0">
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-muted/50 border-b border-border/60 text-muted-foreground font-semibold">
+                <th className="p-3.5 pl-4 w-10">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => !e.target.checked && setSelectedId(null)}
+                    className="rounded border-border"
+                  />
+                </th>
+                <th className="p-3.5">Department Name</th>
+                <th className="p-3.5">Type</th>
+                <th className="p-3.5 text-right pr-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <tr key={idx}>
+                    <td colSpan={4} className="h-12 animate-pulse bg-muted/20" />
+                  </tr>
+                ))
+              ) : departments.length > 0 ? (
+                departments.map((dept) => (
+                  <tr
+                    key={dept.id}
+                    className={`hover:bg-muted/30 transition-colors cursor-pointer ${selectedId === dept.id ? "bg-indigo-500/5" : ""}`}
+                    onClick={() => setSelectedId(selectedId === dept.id ? null : dept.id)}
+                  >
+                    <td className="p-3.5 pl-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedId === dept.id}
+                        onChange={() => setSelectedId(selectedId === dept.id ? null : dept.id)}
+                        className="rounded border-border"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </td>
+                    <td className="p-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-600 font-bold text-xs flex items-center justify-center border border-indigo-500/20">
+                          {dept.name?.[0]?.toUpperCase()}
+                        </div>
+                        <span className="font-medium text-foreground">{dept.name}</span>
+                      </div>
+                    </td>
+                    <td className="p-3.5">
+                      <span className="inline-flex items-center rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-600 border border-indigo-500/20 capitalize">
+                        {dept.type || "Department"}
+                      </span>
+                    </td>
+                    <td className="p-3.5 text-right pr-4">
+                      <V3Button
+                        variant="danger"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteDepartment(dept.id);
+                        }}
+                        isLoading={isDeleting && selectedId === dept.id}
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Delete
+                      </V3Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="h-32 text-center text-xs text-muted-foreground">
+                    No departments found. Create your first department.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="p-4 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
+          <span>Page {currentPage} of {paginationPages}</span>
+          <div className="flex items-center gap-1.5">
+            <V3Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Prev
+            </V3Button>
+            {Array.from({ length: paginationPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${
+                  currentPage === page
+                    ? "bg-indigo-600 text-white"
+                    : "hover:bg-muted text-muted-foreground"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <V3Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.min(paginationPages, p + 1))}
+              disabled={currentPage === paginationPages}
+            >
+              Next <ChevronRight className="h-3.5 w-3.5 ml-1" />
+            </V3Button>
           </div>
         </div>
-        <div className="rounded-md border mb-4">
-          <Table className=" ">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {rowModel?.rows.filter(
-                (row) => row.original.type === "department"
-              ).length ? (
-                rowModel.rows
-                  .filter((row) => row.original.type === "department")
-                  .map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="pt-2 my-3">
-          <Pagination>
-            <PaginationContent className="flex justify-between items-center w-full">
-              <PaginationItem>
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-2 ${currentPage === 1 ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
-                >
-                  Prev
-                </button>
-              </PaginationItem>
-              <div className="flex gap-2">
-                {paginationPages > 0 &&
-                  Array.from({ length: paginationPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <button
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 ${currentPage === page ? "bg-indigo-600 text-white rounded-md" : "text-black hover:text-indigo-600"
-                          }`}
-                      >
-                        {page}
-                      </button>
-                    </PaginationItem>
-                  ))}
-              </div>
-              <PaginationItem>
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, paginationPages))}
-                  disabled={currentPage === paginationPages}
-                  className={`px-3 py-2 ${currentPage === paginationPages ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
-                >
-                  Next
-                </button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      </div>
-    </Card>
+      </V3Card>
+    </div>
   );
 };
 

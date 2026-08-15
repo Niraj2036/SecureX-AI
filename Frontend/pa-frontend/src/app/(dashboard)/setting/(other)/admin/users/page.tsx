@@ -1,48 +1,30 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import ActiveUsers from "@/components/setting-components/activeuserstable";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import Image from "next/image";
 import Inviteuser from "@/components/setting-components/invite-usersheet";
-import Link from "next/link";
 import OkrAdminSideBar from "@/components/setting-components/ork-admin-sidebar";
-import { Separator } from "@/components/ui/separator";
 import axios from "axios";
-const integration = "/settings/integration.png";
-const manage = "/settings/manage.png";
-const notifications = "/settings/notifications.png";
-const okr = "/settings/okr.png";
-const person = "/settings/person.png";
-import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-const users = "/settings/users.png";
-const add = "/settings/add.png";
+import { Users, UserPlus, UserCheck, UserX } from "lucide-react";
+import { V3PageHeader } from "@/components/v3/V3PageHeader";
+import { V3Card } from "@/components/v3/V3Card";
+import { V3Button } from "@/components/v3/V3Button";
 
 const Page = () => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const { data: session, status } = useSession();
   const [active, setActive] = useState(0);
   const [pending, setPending] = useState(0);
-  const pathname = usePathname();
 
-  const {
-    data: userData,
-    isError,
-    isLoading,
-  } = useQuery({
+  const { data: userData, isLoading } = useQuery({
     queryKey: ["users", status],
     enabled: status === "authenticated",
     queryFn: async () => {
       const response = await axios.get(`${backendUrl}/users`, {
-        headers: {
-          Authorization: `Bearer ${session?.user?.token}`,
-        },
+        headers: { Authorization: `Bearer ${session?.user?.token}` },
       });
-      console.log(response.data);
       return response.data.data.data;
     },
   });
@@ -54,58 +36,72 @@ const Page = () => {
     }
   }, [userData, status]);
 
-
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <div className="h-5 w-5 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+          <span className="text-sm">Loading users...</span>
+        </div>
+      </div>
+    );
   }
-  // if (isError) {
-  //   return <div>Something went wrong</div>;
-  // }
 
   return (
-    <div className="flex p-4 bg-gray-100 min-h-screen ">
-      {/* Sidebar */}
-      <div className="w-1/4 bg-white rounded-lg shadow p-4 mr-2">
-        <h2 className="font-semibold text-lg">Admin</h2>
-        <Separator className="mt-4" />
-        <br></br>
-        <OkrAdminSideBar />
-      </div>
+    <div className="space-y-6">
+      <V3PageHeader
+        title="User Management"
+        description="Manage administrator users and access privilege delegation."
+        badgeText="Admin Panel"
+        badgeIcon={<Users className="h-3 w-3 text-indigo-600" />}
+      >
+        <Inviteuser>
+          <V3Button>
+            <UserPlus className="h-4 w-4 mr-1.5" />
+            Invite User
+          </V3Button>
+        </Inviteuser>
+      </V3PageHeader>
 
-      {/* Main Content */}
-      <div className="flex-grow bg-white rounded-lg  p-4 ml-2">
-        <h1 className="font-semibold text-xl text-slate-600">
-          User Management
-        </h1>
-        {/* {JSON.stringify(userData.data)} */}
+      <div className="flex gap-6">
+        {/* Left Sidebar */}
+        <V3Card className="w-56 flex-shrink-0 p-4 h-fit">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Navigation</p>
+          <OkrAdminSideBar />
+        </V3Card>
 
-        <Separator className="mt-4"></Separator>
-        {/* <hr /> */}
-        <div>
-          <Card className="rounded-lg border-none shadow-none mb-2">
-            <div className="flex items-center justify-between mt-3 shadow-none ">
-              <div className="flex items-center space-x-8 shadow-none">
-                <div className="cursor-pointer pb-2  ml-4 ">
-                  Active users ({active})
+        {/* Main Content */}
+        <div className="flex-1 space-y-4">
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 gap-4">
+            <V3Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                  <UserCheck className="h-5 w-5" />
                 </div>
-                <div className="cursor-pointer pb-2  ">
-                  Inactive users ({pending})
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{active}</p>
+                  <p className="text-xs text-muted-foreground">Active Users</p>
                 </div>
               </div>
-              <div className="ml-auto">
-                <Inviteuser>
-                  <Button className="rounded-full w-auto mx-5 my-2 ">
-                    <Image src={add} alt="add" className="w-4" 
-                      width={16}
-                      height={16} />
-                  </Button>
-                </Inviteuser>
+            </V3Card>
+            <V3Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                  <UserX className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{pending}</p>
+                  <p className="text-xs text-muted-foreground">Inactive Users</p>
+                </div>
               </div>
-            </div>
+            </V3Card>
+          </div>
+
+          {/* Users Table */}
+          <V3Card className="overflow-hidden p-0">
             <ActiveUsers />
-            {/* <div className="py-32"></div> */}
-          </Card>
+          </V3Card>
         </div>
       </div>
     </div>

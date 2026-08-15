@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -9,8 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import Image from "next/image";
-const plus = "/settings/plus.png";
 import {
   Sheet,
   SheetContent,
@@ -98,7 +97,7 @@ interface EmployeeTypeMap {
 }
 
 
-const Adminsheet = ({ type = "all" }) => {
+const Adminsheet = ({ type = "all", children }: { type?: string; children?: React.ReactNode }) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const { data: session, status } = useSession();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -243,16 +242,24 @@ const Adminsheet = ({ type = "all" }) => {
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <div className="flex">
-          {(type == "department" || type == "all") && <Button className="bg-white text-slate-500 border hover:bg-muted flex items-center space-x-2">
-            <Image width={32} height={32} src={plus} alt="plus" className="w-3" />
-            <span>Department</span>
-          </Button>}
-          {(type == "team" || type == "all") && <Button className="bg-white text-slate-500 border hover:bg-muted flex items-center space-x-2">
-            <Image width={32} height={32} src={plus} alt="plus" className="w-3" />
-            <span>Team</span>
-          </Button>}
-        </div>
+        {children ? (
+          children
+        ) : (
+          <div className="flex">
+            {(type == "department" || type == "all") && (
+              <Button className="bg-white text-slate-500 border hover:bg-muted flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Department</span>
+              </Button>
+            )}
+            {(type == "team" || type == "all") && (
+              <Button className="bg-white text-slate-500 border hover:bg-muted flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Team</span>
+              </Button>
+            )}
+          </div>
+        )}
       </SheetTrigger>
 
       <SheetContent className="space-y-6">

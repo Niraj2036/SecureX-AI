@@ -1,360 +1,235 @@
 "use client";
 
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
 import axios from "axios";
-const filter = "/employee/filter.png";
-const profile = "/employee/profile.png";
-const sort = "/employee/sort.png";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Adminsheet from "@/components/setting-components/okradmin-navbarsheet";
-import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
-import { useDebounce } from "@/components/ui/multiselect";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import Inviteusers from "@/components/setting-components/invite-usersheet";
-import { Plus } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { Plus, Trash2, ChevronLeft, ChevronRight, Users } from "lucide-react";
+import { V3PageHeader } from "@/components/v3/V3PageHeader";
+import { V3Card } from "@/components/v3/V3Card";
+import { V3Button } from "@/components/v3/V3Button";
 
 interface Team {
   id: string;
   name: string;
-  parentId: string | null;
-  parent: {
-    name: string;
-    parentId: string
-  }
-}
-
-interface Employee {
-  id: string;
-  avatar: string | null;
-  tenantId: string;
-  name: string;
-  teamId: string | null;
-  managerId: string | null;
-  joiningDate: string | null;
-  createdAt: string;
-  updatedAt: string;
-  data: Record<string, any>;
-  role: string;
-  jobTitle?: string;
-  manager?: string;
-  company?: string;
   type: string;
-  department?: string;
-  users: Team[];
-  parent: {
-    name: string;
-    parentId: string
-  }
+  parentId: string | null;
+  parent?: { name: string; parentId?: string };
+  users?: any[];
+  avatar?: string | null;
 }
-const columns: ColumnDef<Employee>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-      />
-    ),
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Avatar className="mr-2">
-          <AvatarImage src={row.original.avatar || undefined} alt={`${row.original?.name}'s avatar`} />
-          <AvatarFallback>
-            {row.original?.name[0]?.toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col">
-          <span>{row.original.name}</span>
-        </div>
-      </div>
-    ),
-  },
-  // { accessorKey: "designation", header: "Job Title" },
-  // { accessorKey: "managerId", header: "Manager" },
-  // { accessorKey: "department", header: "Department", cell: ({ row }) => <div>{row.original.parent.name}</div> },
-  {
-    accessorKey: "Department Name",
-    header: "Department Name",
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <div className="mr-2">{row.original.parent.name || "No Team Assigned"}</div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "Team Size",
-    header: "Team Size",
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <div className="mr-2">{row.original.users.length || 0}</div>
-      </div>
-    ),
-  },
-];
 
 const Teams = () => {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const { data: session } = useSession();
-  const [paginationPages, setPaginationPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const debouncedPage = useDebounce(currentPage, 300);
   const [totalTeams, setTotalTeams] = useState<number>(0);
-  const {
-    data: teamData,
-    isError,
-    isLoading,
-  } = useQuery({
-    queryKey: ["teams", debouncedPage],
+  const [paginationPages, setPaginationPages] = useState<number>(1);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data: teamData, isLoading } = useQuery({
+    queryKey: ["teams_settings", currentPage],
     queryFn: async () => {
       const response = await axios.get(`${backendUrl}/teams?pageNo=${currentPage}`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.token}`,
-        },
+        headers: { Authorization: `Bearer ${session?.user.token}` },
       });
-      console.log(response.data);
       return response.data;
     },
+    enabled: !!session?.user?.token,
   });
 
   useEffect(() => {
-    if (teamData?.data.pagination) {
-      console.log(teamData, "rishi data consoled");
-      setTotalTeams(teamData.data.pagination.totalTeams);
-      setPaginationPages(teamData.data.pagination.totalPages);
+    if (teamData?.data?.pagination) {
+      setTotalTeams(teamData.data.pagination.totalTeams || 0);
+      setPaginationPages(teamData.data.pagination.totalPages || 1);
     }
-    console.log(teamData, "rishi data consoled");
   }, [teamData]);
 
-  const queryClient = useQueryClient();
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["teams"] });
+    queryClient.invalidateQueries({ queryKey: ["teams_settings"] });
   }, [currentPage, queryClient]);
 
-  const table = useReactTable({
-    data: teamData?.data.data || [],
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
-  const rowModel = table.getRowModel();
-  const { mutate: deleteDepartment, status: deleteStatus } = useMutation({
-    mutationFn: async (departmentId: string) => {
-      return axios.delete(`${backendUrl}/teams/${departmentId}`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.token}`,
-        },
+  const teams: Team[] = teamData?.data?.data || [];
+
+  const { mutate: deleteTeam, status: deleteStatus } = useMutation({
+    mutationFn: async (teamId: string) => {
+      return axios.delete(`${backendUrl}/teams/${teamId}`, {
+        headers: { Authorization: `Bearer ${session?.user.token}` },
       });
     },
-    onSuccess: (_, departmentId) => {
-      const deletedDepartment = rowModel?.rows.find(
-        (row) => row.original.id === departmentId
-      )?.original;
-      toast({
-        title: "Team deleted",
-        description: `You have deleted ${deletedDepartment?.name}`,
-        duration: 3000,
-      })
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
-      setRowSelection({});
+    onSuccess: (_, teamId) => {
+      const deleted = teams.find((t) => t.id === teamId);
+      toast({ title: "Team deleted", description: `${deleted?.name} has been removed.`, duration: 3000 });
+      queryClient.invalidateQueries({ queryKey: ["teams_settings"] });
+      setSelectedId(null);
     },
-    onError: (error) => {
-      toast({
-        title: "Error deleting department",
-        description: "There was an error deleting the department",
-        duration: 3000,
-      })
-      console.error("Error deleting department:", error);
-    }
+    onError: () => {
+      toast({ title: "Error deleting team", description: "Could not delete team.", duration: 3000 });
+    },
   });
 
-  const isDeleting = deleteStatus === 'pending';
-  const selectedRow = Object.keys(rowSelection)[0];
-  const selectedDepartment = rowModel?.rows.find(
-    (row) => row.id === selectedRow
-  )?.original;
+  const isDeleting = deleteStatus === "pending";
+  const selectedTeam = teams.find((t) => t.id === selectedId);
 
-
-  // console.log(teamData, "rishi data consoled");
   return (
-    // <div className="flex p-4 bg-gray-100 min-h-screen">
-    //   <SettingSidebar />
-
-    <Card className="w-full max-w-4xl  bg-white  shadow-sm">
-      <div className="w-full px-4">
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center">
-            {/* <Image width={28} height={28} src={two} alt="two" className="w-7 ml-2" />
-             */}
-            <div className="w-7 rounded-full h-7 flex justify-center items-center text-white  bg-[#189D92] ml-2">
-              {totalTeams}
-            </div>
-
-            <p className="ml-2 text-slate-600">Teams</p>
-          </div>
-
-          <div className="flex items-center">
-            {/* <Image width={80} height={80} src={filter} alt="filter" className="w-20 h-9 mr-2" /> */}
-            {/* <Image width={80} height={80} src={sort} alt="sorting" className="w-20 h-9 mr-2" /> */}
-            <Adminsheet type="team" />
-            {selectedDepartment && (
-              <Button
-                variant="destructive"
-                onClick={() => deleteDepartment(selectedDepartment.id)}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Deleting..." : "Delete"}
-              </Button>
-            )}
-            <Inviteusers>
-              <Button className=" bg-white text-slate-500 hover:bg-muted border  flex items-center space-x-2 mx-2">
-                <Plus />
-                Add User
-              </Button>
-            </Inviteusers>
-          </div>
+    <div className="space-y-6">
+      <V3PageHeader
+        title="Teams"
+        description="Manage organizational teams within departments."
+        badgeText={`${totalTeams} Teams`}
+        badgeIcon={<Users className="h-3 w-3 text-indigo-600" />}
+      >
+        <div className="flex items-center gap-2">
+          {selectedTeam && (
+            <V3Button
+              variant="danger"
+              onClick={() => deleteTeam(selectedTeam.id)}
+              isLoading={isDeleting}
+            >
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              Delete
+            </V3Button>
+          )}
+          <Adminsheet type="team">
+            <V3Button variant="outline">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add Team
+            </V3Button>
+          </Adminsheet>
+          <Inviteusers>
+            <V3Button>
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add User
+            </V3Button>
+          </Inviteusers>
         </div>
-        <div className="rounded-md border mb-4 ">
-          <Table className="mb-2 ">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {rowModel?.rows.filter((row) => row.original.type === "team")
-                .length ? (
-                rowModel.rows
-                  .filter((row) => row.original.type === "team")
-                  .map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
+      </V3PageHeader>
+
+      <V3Card className="overflow-hidden p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-muted/50 border-b border-border/60 text-muted-foreground font-semibold">
+                <th className="p-3.5 pl-4 w-10">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => !e.target.checked && setSelectedId(null)}
+                    className="rounded border-border"
+                  />
+                </th>
+                <th className="p-3.5">Team Name</th>
+                <th className="p-3.5">Department</th>
+                <th className="p-3.5 text-center">Team Size</th>
+                <th className="p-3.5 text-right pr-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <tr key={idx}>
+                    <td colSpan={5} className="h-12 animate-pulse bg-muted/20" />
+                  </tr>
+                ))
+              ) : teams.length > 0 ? (
+                teams.map((team) => (
+                  <tr
+                    key={team.id}
+                    className={`hover:bg-muted/30 transition-colors cursor-pointer ${selectedId === team.id ? "bg-indigo-500/5" : ""}`}
+                    onClick={() => setSelectedId(selectedId === team.id ? null : team.id)}
                   >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="pt-2 my-3">
-          <Pagination>
-            <PaginationContent className="flex justify-between items-center w-full">
-              <PaginationItem>
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-2 ${currentPage === 1 ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
-                >
-                  Prev
-                </button>
-              </PaginationItem>
-              <div className="flex gap-2">
-                {paginationPages > 0 &&
-                  Array.from({ length: paginationPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <button
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 ${currentPage === page ? "bg-indigo-600 text-white rounded-md" : "text-black hover:text-indigo-600"
-                          }`}
+                    <td className="p-3.5 pl-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedId === team.id}
+                        onChange={() => setSelectedId(selectedId === team.id ? null : team.id)}
+                        className="rounded border-border"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </td>
+                    <td className="p-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-violet-500/10 text-violet-600 font-bold text-xs flex items-center justify-center border border-violet-500/20">
+                          {team.name?.[0]?.toUpperCase()}
+                        </div>
+                        <span className="font-medium text-foreground">{team.name}</span>
+                      </div>
+                    </td>
+                    <td className="p-3.5 text-muted-foreground">
+                      {team.parent?.name || "—"}
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <span className="inline-flex items-center justify-center rounded-full bg-slate-500/10 px-2 py-0.5 text-[10px] font-semibold text-slate-600 border border-slate-500/20">
+                        {team.users?.length || 0} members
+                      </span>
+                    </td>
+                    <td className="p-3.5 text-right pr-4">
+                      <V3Button
+                        variant="danger"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteTeam(team.id);
+                        }}
+                        isLoading={isDeleting && selectedId === team.id}
                       >
-                        {page}
-                      </button>
-                    </PaginationItem>
-                  ))}
-              </div>
-              <PaginationItem>
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, paginationPages))}
-                  disabled={currentPage === paginationPages}
-                  className={`px-3 py-2 ${currentPage === paginationPages ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
-                >
-                  Next
-                </button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Delete
+                      </V3Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="h-32 text-center text-xs text-muted-foreground">
+                    No teams found. Create your first team.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      </div>
-    </Card>
+
+        {/* Pagination */}
+        <div className="p-4 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
+          <span>Page {currentPage} of {paginationPages}</span>
+          <div className="flex items-center gap-1.5">
+            <V3Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Prev
+            </V3Button>
+            {Array.from({ length: paginationPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${
+                  currentPage === page
+                    ? "bg-indigo-600 text-white"
+                    : "hover:bg-muted text-muted-foreground"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <V3Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.min(paginationPages, p + 1))}
+              disabled={currentPage === paginationPages}
+            >
+              Next <ChevronRight className="h-3.5 w-3.5 ml-1" />
+            </V3Button>
+          </div>
+        </div>
+      </V3Card>
+    </div>
   );
 };
 

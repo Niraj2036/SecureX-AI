@@ -2,21 +2,18 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
+import { Eye, EyeOff, Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-const lock = "/auth/lock.png";
 import useSessionStore from "@/store/sessionStore";
 import { useToast } from "@/hooks/use-toast";
-
-const logo = "/logo.svg";
+import { V3Button } from "@/components/v3/V3Button";
 
 const Page = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const router = useRouter();
   const { toast } = useToast();
@@ -31,116 +28,98 @@ const Page = () => {
       return response.data;
     },
     onSuccess: () => {
-      toast({
-        title: "Password Changed Successfully",
-        description: "Redirecting to Login page",
-      });
+      toast({ title: "Password Changed Successfully", description: "Redirecting to Login page" });
       router.push("/auth/login");
     },
-    onError: (error) => {
-      toast({
-        title: "Password Change failed",
-        description: "Try again Later",
-      });
-      console.error("Error resetting password:", error.message);
+    onError: () => {
+      toast({ title: "Password Change failed", description: "Try again Later" });
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast({
-        title: "Both Passwords must be Same",
-      });
-
+      toast({ title: "Passwords do not match" });
       return;
     }
     resetPasswordMutation.mutate();
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="absolute top-8">
-        <Image src={logo} alt="logo" width={120} height={32} className="h-8 w-auto" />
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4">
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
-      <div className="w-full max-w-md px-6 py-8 bg-white border rounded-lg shadow-md">
-        <div className="flex flex-col items-center justify-center mb-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold text-center">
-              Create A New Password
-            </h1>
+      <div className="relative w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+            <Lock className="w-7 h-7 text-white" />
           </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Create New Password</h1>
+          <p className="text-slate-400 text-sm mt-1">For your security, this will log you out of all devices</p>
         </div>
 
-        <p className="text-gray-600 mb-6 text-sm text-center">
-          For your security, changing your password will log you out of all
-          devices.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label>
-              Enter New Password <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password here"
-                className="w-full"
-                required
-              />
-              <Image width={20} height={20}
-                src={lock}
-                alt="lock"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
-              />
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">New Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                  className="w-full h-10 pl-9 pr-10 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <Label>
-              Confirm New Password <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password here"
-                className="w-full"
-                required
-              />
-              <Image width={20} height={20}
-                src={lock}
-                alt="lock"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
-              />
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">Confirm Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  required
+                  className="w-full h-10 pl-9 pr-10 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                >
+                  {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={resetPasswordMutation.isPending}
-          >
-            {resetPasswordMutation.isPending
-              ? "Resetting Password..."
-              : "Create New Password"}
-          </Button>
-        </form>
+            <V3Button type="submit" isLoading={resetPasswordMutation.isPending} className="w-full" size="lg">
+              {!resetPasswordMutation.isPending && <ArrowRight className="h-4 w-4 mr-1" />}
+              {resetPasswordMutation.isPending ? "Resetting Password..." : "Create New Password"}
+            </V3Button>
+          </form>
 
-        <p className="text-center mt-6 text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="text-teal-600 hover:underline">
-            Create an Account
-          </Link>
-        </p>
+          <p className="text-center text-slate-400 text-sm mt-5">
+            Don&apos;t have an account?{" "}
+            <Link href="/auth/signup" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+              Create Account
+            </Link>
+          </p>
+        </div>
 
-        <p className="text-center text-gray-500 text-xs mt-8">
-          &copy;SecureXAi Corp 2024 All Right Reserved
+        <p className="text-center text-slate-600 text-xs mt-6">
+          © SecureXAi Corp 2024. All Rights Reserved
         </p>
       </div>
     </div>

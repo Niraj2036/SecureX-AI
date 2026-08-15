@@ -1,6 +1,8 @@
+"use client";
+
 import * as XLSX from "xlsx";
 
-import { CheckCircle, Trash, XCircle } from "lucide-react";
+import { CheckCircle, Trash, XCircle, Upload } from "lucide-react";
 import Dropzone, { DropzoneState } from "shadcn-dropzone";
 
 import { Button } from "../ui/button";
@@ -8,7 +10,6 @@ import Image from "next/image";
 import axios from "axios";
 import moment from "moment";
 import { toast } from "@/hooks/use-toast";
-const upload = "/settings/upload.png";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -195,7 +196,7 @@ const Uploaddata = ({ change, selectedCard }: any) => {
                 <div className="text-sm font-medium">Drop your files here!</div>
               ) : (
                 <div className="flex items-center flex-col gap-2">
-                  <Image width={24} height={24} src={upload} alt="upload icon" className="w-6" />
+                  <Upload className="w-6 h-6 text-indigo-600" />
                   <div className="text-sm font-semibold">
                     Create or Import Classification
                   </div>

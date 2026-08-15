@@ -1,16 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Wizard, useWizard } from "react-use-wizard";
-
-import { Button } from "@/components/ui/button";
-import Employselect from "@/components/auth/employselect";
-import Image from "next/image";
-import IndustrySelect from "@/components/auth/industryselect";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import RoleSelect from "@/components/auth/roleselect";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -18,22 +8,19 @@ import useSessionStore from "@/store/signupStore";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const logo = "/logo.svg";
+import axios from "axios";
+import { Eye, EyeOff, Building2, User, Mail, Globe, Lock, ChevronRight, ChevronLeft, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import Employselect from "@/components/auth/employselect";
+import IndustrySelect from "@/components/auth/industryselect";
+import RoleSelect from "@/components/auth/roleselect";
+import { V3Button } from "@/components/v3/V3Button";
 
 const formSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, "Name is required.")
-    .max(50, "Name cannot exceed 50 characters."),
+  firstName: z.string().min(1, "Name is required.").max(50),
   email: z.string().email("Invalid email address."),
-  companyName: z
-    .string()
-    .min(1, "Company Name is required.")
-    .max(100, "Company Name cannot exceed 100 characters."),
-  companyWebsite: z
-    .string()
-    .min(1, "Company Website is required."),
+  companyName: z.string().min(1, "Company Name is required.").max(100),
+  companyWebsite: z.string().min(1, "Company Website is required."),
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
@@ -46,6 +33,10 @@ const Page = () => (
   </Wizard>
 );
 
+const bgClass = "min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4";
+const cardClass = "bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl";
+const inputClass = "w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all";
+
 const Step1 = () => {
   const { nextStep } = useWizard();
   const { setName, name } = useSessionStore((state) => state);
@@ -53,30 +44,18 @@ const Step1 = () => {
   const setcompanyname = useSessionStore((state) => state.setCompanyName);
   const setcompanywebsite = useSessionStore((state) => state.setWebsite);
   const setPassword = useSessionStore((state) => state.setPassword);
-
   const email = useSessionStore((state) => state.email);
   const companyName = useSessionStore((state) => state.companyName);
   const companyWebsite = useSessionStore((state) => state.website);
   const password = useSessionStore((state) => state.password);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: name || "",
-      email: email || "",
-      companyName: companyName || "",
-      companyWebsite: companyWebsite || "",
-      password: password || "",
-    },
+    defaultValues: { firstName: name || "", email: email || "", companyName: companyName || "", companyWebsite: companyWebsite || "", password: password || "" },
   });
 
-  // Update session store data on form submit
   const onSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
     setName(data.firstName);
     setemail(data.email.toLowerCase());
     setcompanyname(data.companyName);
@@ -86,125 +65,83 @@ const Step1 = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="absolute top-8">
-        <Image src={logo} alt="logo" width={120} height={32} className="h-8 w-auto" />
-      </div>
+    <div className={bgClass}>
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      <div className="relative w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+            <Building2 className="w-7 h-7 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Create Your Account</h1>
+          <p className="text-slate-400 text-sm mt-1">Step 1 of 2 — Company & personal details</p>
+        </div>
 
-      <div className="w-full max-w-md">
-        <Card className="border-gray-200">
-          <CardHeader className="space-y-2">
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold">Get Started!</h2>
-              <p className="text-sm text-gray-500">
-              </p>
+        <div className={cardClass}>
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">Full Name <span className="text-rose-400">*</span></label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input placeholder="Enter your name" {...register("firstName")} className={inputClass} />
+              </div>
+              {errors.firstName && <p className="text-rose-400 text-xs">{errors.firstName.message}</p>}
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <span className="flex items-center justify-center w-8 h-8 border rounded-full">
-                1
-              </span>
-              <span className="text-gray-300">/</span>
-              <span className="text-teal-600">2</span>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">Work Email <span className="text-rose-400">*</span></label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input placeholder="you@company.com" {...register("email")} className={inputClass} />
+              </div>
+              {errors.email && <p className="text-rose-400 text-xs">{errors.email.message}</p>}
             </div>
-          </CardHeader>
 
-          <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid">
-                <div className="space-y-2">
-                  <Label>
-                    Name <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    placeholder="Enter your name"
-                    {...register("firstName")}
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500 text-sm">
-                      {errors.firstName.message}
-                    </p>
-                  )}
-                </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">Company Name <span className="text-rose-400">*</span></label>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input placeholder="Acme Corp" {...register("companyName")} className={inputClass} />
               </div>
-              <div className="space-y-2">
-                <Label>
-                  Email <span className="text-red-500">*</span>
-                </Label>
-                <Input placeholder="Enter your email" {...register("email")} />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
+              {errors.companyName && <p className="text-rose-400 text-xs">{errors.companyName.message}</p>}
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">Company Website <span className="text-rose-400">*</span></label>
+              <div className="relative">
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input placeholder="https://acme.com" {...register("companyWebsite")} className={inputClass} />
               </div>
+              {errors.companyWebsite && <p className="text-rose-400 text-xs">{errors.companyWebsite.message}</p>}
+            </div>
 
-              <div className="space-y-2">
-                <Label>
-                  Company Name <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  placeholder="Enter your company name here"
-                  {...register("companyName")}
-                />
-                {errors.companyName && (
-                  <p className="text-red-500 text-sm">
-                    {errors.companyName.message}
-                  </p>
-                )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 block">Password <span className="text-rose-400">*</span></label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input type={showPassword ? "text" : "password"} placeholder="Min. 8 characters" {...register("password")} className={`${inputClass} pr-10`} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300">
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
+              {errors.password && <p className="text-rose-400 text-xs">{errors.password.message}</p>}
+            </div>
 
-              <div className="space-y-2">
-                <Label>
-                  Company Website <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  placeholder="Enter your company website"
-                  {...register("companyWebsite")}
-                />
-                {errors.companyWebsite && (
-                  <p className="text-red-500 text-sm">
-                    {errors.companyWebsite.message}
-                  </p>
-                )}
-              </div>
+            <V3Button type="submit" className="w-full" size="lg">
+              Continue <ChevronRight className="h-4 w-4 ml-1" />
+            </V3Button>
 
-              <div className="space-y-2">
-                <Label>
-                  Password <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  placeholder="Enter your password"
-                  type="password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password.message}</p>
-                )}
-              </div>
+            <p className="text-center text-slate-400 text-sm">
+              Already have an account?{" "}
+              <a href="/auth/login" className="text-indigo-400 font-semibold hover:text-indigo-300">Sign In</a>
+            </p>
+          </form>
+        </div>
 
-              <Button className="w-full" type="submit">
-                Next
-              </Button>
-
-              <p className="text-center text-sm">
-                Have an account?{" "}
-                <a
-                  href="/auth/login"
-                  className="text-primary-500 font-semibold hover:underline"
-                >
-                  Login
-                </a>
-              </p>
-            </form>
-          </CardContent>
-        </Card>
-
-        <p className="text-center text-gray-500 text-xs mt-4">
-          &copy; SecureXAi. Copyright 2024. All Rights Reserved
-        </p>
+        <p className="text-center text-slate-600 text-xs mt-6">© SecureXAi. Copyright 2024. All Rights Reserved</p>
       </div>
     </div>
   );
 };
-
 
 const Step2 = () => {
   const { previousStep } = useWizard();
@@ -212,178 +149,97 @@ const Step2 = () => {
   const router = useRouter();
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
-  const {
-    name: storedname,
-    email: storedemail,
-    companyName: storedcompanyname,
-    website: storedwebsite,
-    designation: storeddesignation,
-    industry: storedindustry,
-    employeeSize: storedemployeesize,
-    password: storedpassword,
-  } = useSessionStore.getState();
+  const { name: storedname, email: storedemail, companyName: storedcompanyname, website: storedwebsite, designation: storeddesignation, industry: storedindustry, employeeSize: storedemployeesize, password: storedpassword } = useSessionStore.getState();
 
   const sendOtpMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(`${backendUrl}/otp/send`, {
-        email: storedemail,
-        reason: "verify_user",
-      });
+      const response = await axios.post(`${backendUrl}/otp/send`, { email: storedemail, reason: "verify_user" });
       return response.data;
     },
     onSuccess: () => {
-      toast({
-        title: "OTP Sent Successfully",
-        description: "Check your email to verify your account.",
-      });
+      toast({ title: "OTP Sent Successfully", description: "Check your email to verify your account." });
       router.push("/auth/verify-otp");
     },
     onError: (error: any) => {
-      const errorMessage =
-        error?.response?.data?.message?.join(", ") ||
-        error?.response?.data?.message ||
-        "An error occurred.";
-      console.error("Signup failed:", errorMessage);
-      toast({
-        title: "Signup Failed",
-        description: errorMessage,
-        duration: 3000,
-        variant: "destructive",
-      });
+      const errorMessage = error?.response?.data?.message?.join(", ") || error?.response?.data?.message || "An error occurred.";
+      toast({ title: "Signup Failed", description: errorMessage, duration: 3000, variant: "destructive" });
     },
   });
 
   const submitsignupMutation = useMutation({
     mutationFn: async () => {
-      const signupData = {
-        name: storedname,
-        phoneCode: "IN_91",
-        mobile: "1234567890",
-        email: storedemail,
-        companyname: storedcompanyname,
-        website: storedwebsite,
-        designation: storeddesignation,
-        industry: storedindustry,
-        employeeSize: storedemployeesize,
-        password: storedpassword,
-        userLimit: 100,
-      };
-
-      const response = await axios.post(`${backendUrl}/users/register`, signupData);
+      const response = await axios.post(`${backendUrl}/users/register`, {
+        name: storedname, phoneCode: "IN_91", mobile: "1234567890", email: storedemail,
+        companyname: storedcompanyname, website: storedwebsite, designation: storeddesignation,
+        industry: storedindustry, employeeSize: storedemployeesize, password: storedpassword, userLimit: 100,
+      });
       return response.data;
     },
     onSuccess: () => {
-      toast({
-        title: "Signup Successful",
-        description: "Please verify your email to complete signup.",
-        duration: 3000,
-      });
+      toast({ title: "Signup Successful", description: "Please verify your email to complete signup.", duration: 3000 });
       sendOtpMutation.mutate();
     },
     onError: (error: any) => {
-      let message = "Something went wrong. Please try again.";
-
-      if (error.response?.data?.message) {
-        const errMsg = error.response.data.message;
-        message = Array.isArray(errMsg) ? errMsg.join(", ") : errMsg;
-      }
-
-      toast({
-        title: "Signup Failed",
-        description: message,
-        duration: 3000,
-        variant: "destructive",
-      });
+      const errMsg = error.response?.data?.message;
+      const message = Array.isArray(errMsg) ? errMsg.join(", ") : errMsg || "Something went wrong. Please try again.";
+      toast({ title: "Signup Failed", description: message, duration: 3000, variant: "destructive" });
     },
   });
 
   const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!storedpassword || storedpassword.length < 8) {
-      toast({
-        title: "Invalid Password",
-        description: "Password must be at least 8 characters long.",
-        duration: 3000,
-        variant: "destructive",
-      });
+      toast({ title: "Invalid Password", description: "Password must be at least 8 characters long.", duration: 3000, variant: "destructive" });
       return;
     }
-
     submitsignupMutation.mutate();
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="absolute top-8">
-        <Image src={logo} alt="logo" width={120} height={32} className="h-8 w-auto" />
-      </div>
+    <div className={bgClass}>
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      <div className="relative w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+            <Building2 className="w-7 h-7 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Organization Setup</h1>
+          <p className="text-slate-400 text-sm mt-1">Step 2 of 2 — Configure your organization</p>
+        </div>
 
-      <div className="w-full max-w-md">
-        <Card className="border-gray-200">
-          <CardHeader className="space-y-2">
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold">Get Started!</h2>
-              <p className="text-sm text-gray-500">
-                Sign up now and integrate our system into your workflow.
-              </p>
+        <div className={cardClass}>
+          <form className="space-y-5" onSubmit={handleSignup}>
+            <div className="space-y-2">
+              <RoleSelect />
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <span className="flex items-center justify-center w-8 h-8 border rounded-full">
-                2
-              </span>
-              <span className="text-gray-300">/</span>
-              <span className="text-teal-600">2</span>
+            <div className="space-y-2">
+              <IndustrySelect />
             </div>
-          </CardHeader>
+            <div className="space-y-2">
+              <Employselect />
+            </div>
 
-          <CardContent>
-            <form className="space-y-4" onSubmit={handleSignup}>
-              <div className="space-y-2">
-                <RoleSelect></RoleSelect>
-              </div>
+            <div className="flex gap-3 pt-2">
+              <V3Button type="button" variant="outline" onClick={previousStep} className="flex-1" size="lg">
+                <ChevronLeft className="h-4 w-4 mr-1" /> Back
+              </V3Button>
+              <V3Button type="submit" isLoading={submitsignupMutation.isPending} className="flex-1" size="lg">
+                {!submitsignupMutation.isPending && <ArrowRight className="h-4 w-4 mr-1" />}
+                {submitsignupMutation.isPending ? "Signing Up..." : "Sign Up"}
+              </V3Button>
+            </div>
 
-              <div className="space-y-2">
-                <IndustrySelect></IndustrySelect>
-              </div>
+            <p className="text-center text-slate-400 text-sm">
+              Already have an account?{" "}
+              <a href="/auth/login" className="text-indigo-400 font-semibold hover:text-indigo-300">Sign In</a>
+            </p>
+          </form>
+        </div>
 
-              <div className="space-y-2">
-                <Employselect></Employselect>
-              </div>
-
-              <div>
-                <div className="flex gap-4">
-                  <Button
-                    className="w-full bg-white text-black border border-slate-300 hover:bg-gray-200"
-                    type="button"
-                    onClick={previousStep}
-                  >
-                    Back
-                  </Button>
-                  <Button className="w-full" type="submit" disabled={submitsignupMutation.isPending}>
-                    {submitsignupMutation.isPending ? "Signing Up..." : "Sign Up"}
-                  </Button>
-                </div>
-              </div>
-
-              <p className="text-center text-sm">
-                Have an account?{" "}
-                <a
-                  href="/auth/login"
-                  className="text-primary-500 font-semibold hover:underline"
-                >
-                  Login
-                </a>
-              </p>
-            </form>
-          </CardContent>
-        </Card>
-
-        <p className="text-center text-gray-500 text-xs mt-4">
-          &copy; SecureXAi. Copyright 2024. All Rights Reserved
-        </p>
+        <p className="text-center text-slate-600 text-xs mt-6">© SecureXAi. Copyright 2024. All Rights Reserved</p>
       </div>
     </div>
   );
 };
+
 export default Page;

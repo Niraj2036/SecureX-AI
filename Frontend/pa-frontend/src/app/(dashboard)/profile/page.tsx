@@ -3,9 +3,7 @@
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { V3Button } from '@/components/v3/V3Button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
@@ -183,96 +181,83 @@ const Page = () => {
                 {/* Avatar action buttons */}
                 {isAvatarChanged && (
                     <div className="flex gap-2 mb-4">
-                        <Button
+                        <V3Button
                             type="button"
                             onClick={handleSaveAvatar}
-                            disabled={avatarMutation.isPending}
+                            isLoading={avatarMutation.isPending}
                         >
-                            {avatarMutation.isPending ? (
-                                <div className="flex items-center gap-2">
-                                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Uploading...
-                                </div>
-                            ) : 'Save Avatar'}
-                        </Button>
-                        <Button
+                            {avatarMutation.isPending ? 'Uploading...' : 'Save Avatar'}
+                        </V3Button>
+                        <V3Button
                             type="button"
                             variant="outline"
                             onClick={handleCancelAvatar}
                             disabled={avatarMutation.isPending}
                         >
                             Cancel
-                        </Button>
+                        </V3Button>
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full max-w-lg mx-auto">
                     <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="First Name" {...register('firstName', { required: 'First name is required' })} />
+                        <label htmlFor="firstName" className="text-xs font-semibold text-foreground block">First Name</label>
+                        <input id="firstName" placeholder="First Name" {...register('firstName', { required: 'First name is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
                         {errors.firstName && <span className="text-red-500 text-sm">{String(errors.firstName.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Last Name" {...register('lastName', { required: 'Last name is required' })} />
+                        <label htmlFor="lastName" className="text-xs font-semibold text-foreground block">Last Name</label>
+                        <input id="lastName" placeholder="Last Name" {...register('lastName', { required: 'Last name is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
                         {errors.lastName && <span className="text-red-500 text-sm">{String(errors.lastName.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input id="email" type="email" placeholder="Email Address" {...register('email', { required: 'Email is required', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' } })} />
+                        <label htmlFor="email" className="text-xs font-semibold text-foreground block">Email Address</label>
+                        <input id="email" type="email" placeholder="Email Address" {...register('email', { required: 'Email is required', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' } })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
                         {errors.email && <span className="text-red-500 text-sm">{String(errors.email.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" type="tel" placeholder="Phone Number" {...register('phone', { required: 'Phone number is required' })} />
+                        <label htmlFor="phone" className="text-xs font-semibold text-foreground block">Phone Number</label>
+                        <input id="phone" type="tel" placeholder="Phone Number" {...register('phone', { required: 'Phone number is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
                         {errors.phone && <span className="text-red-500 text-sm">{String(errors.phone.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="password">Password  <Link
-                            href="/auth/forgot-password"
-                            className="text-sm text-teal-600 hover:underline"
-                        >
-                            Forgot Password?
-                        </Link></Label>
-                        <Input id="password" type="password" placeholder="Password" {...register('password', { required: 'Password is required' })} disabled />
+                        <label htmlFor="password" className="text-xs font-semibold text-foreground block">Password <Link href="/auth/forgot-password" className="text-sm text-indigo-600 hover:underline">Forgot Password?</Link></label>
+                        <input id="password" type="password" placeholder="Password" {...register('password', { required: 'Password is required' })} disabled className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none transition-all opacity-60" />
                         {errors.password && <span className="text-red-500 text-sm">{String(errors.password.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="jobTitle">Job Title</Label>
-                        <Input id="jobTitle" placeholder="Job Title" {...register('jobTitle', { required: 'Job title is required' })} disabled />
+                        <label htmlFor="jobTitle" className="text-xs font-semibold text-foreground block">Job Title</label>
+                        <input id="jobTitle" placeholder="Job Title" {...register('jobTitle', { required: 'Job title is required' })} disabled className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground transition-all opacity-60" />
                         {errors.jobTitle && <span className="text-red-500 text-sm">{String(errors.jobTitle.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="manager">Manager</Label>
-                        <Input id="manager" placeholder="Manager" disabled {...register('manager')} />
+                        <label htmlFor="manager" className="text-xs font-semibold text-foreground block">Manager</label>
+                        <input id="manager" placeholder="Manager" disabled {...register('manager')} className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground transition-all opacity-60" />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="department">Department</Label>
-                        <Input id="department" placeholder="Department" disabled {...register('department')} />
+                        <label htmlFor="department" className="text-xs font-semibold text-foreground block">Department</label>
+                        <input id="department" placeholder="Department" disabled {...register('department')} className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground transition-all opacity-60" />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="team">Team</Label>
-                        <Input id="team" placeholder="Team" {...register('team')} disabled />
+                        <label htmlFor="team" className="text-xs font-semibold text-foreground block">Team</label>
+                        <input id="team" placeholder="Team" {...register('team')} disabled className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground transition-all opacity-60" />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="joinDate">Join Date</Label>
-                        <Input id="joinDate" type="date" {...register('joinDate', { required: 'Join date is required' })} disabled />
+                        <label htmlFor="joinDate" className="text-xs font-semibold text-foreground block">Join Date</label>
+                        <input id="joinDate" type="date" {...register('joinDate', { required: 'Join date is required' })} disabled className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground transition-all opacity-60" />
                         {errors.joinDate && <span className="text-red-500 text-sm">{String(errors.joinDate.message)}</span>}
                     </div>
 
-                    <Button type="submit" className="mt-4 w-full">Submit</Button>
+                    <V3Button type="submit" className="mt-4 w-full">Save Profile</V3Button>
                 </form>
             </div>
         </div>

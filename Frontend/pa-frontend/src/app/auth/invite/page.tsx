@@ -1,19 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { headers } from "next/headers";
-import { Label } from "@radix-ui/react-dropdown-menu";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, Lock, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-const logo = "/logo.svg";
+import { V3Button } from "@/components/v3/V3Button";
 
 const AcceptInvitePage = () => {
     const searchParams = useSearchParams();
@@ -26,10 +19,9 @@ const AcceptInvitePage = () => {
     const [userEmail, setUserEmail] = useState("")
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [otpToken, setOtpToken] = useState("");
-    const togglePasswordVisibility = () => {
-        setIsPasswordVisible(!isPasswordVisible);
-    };
-    const router = useRouter()
+    const router = useRouter();
+
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
     const resetPasswordMutation = useMutation({
         mutationFn: async () => {
@@ -40,37 +32,40 @@ const AcceptInvitePage = () => {
             return response.data;
         },
         onSuccess: () => {
-            toast({
-                title: "Password Changed Successfully",
-                description: "Redirecting to Login page",
-            });
+            toast({ title: "Password Changed Successfully", description: "Redirecting to Login page" });
             router.push("/auth/login");
         },
-        onError: (error) => {
-            toast({
-                title: "Password Change failed",
-                description: "Try again Later",
-            });
-            console.error("Error resetting password:", error.message);
+        onError: (error: Error) => {
+            toast({ title: "Password Change failed", description: "Try again Later" });
         },
     });
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            toast({
-                title: "Both Passwords must be Same",
-            });
+            toast({ title: "Both Passwords must be Same" });
             return;
         }
         resetPasswordMutation.mutate();
     };
 
-    const handleVerifyClick = (event: any) => {
-        event.preventDefault()
-        setShowOtpPage(true);
-        sendOtpMutation.mutate()
+    const sendOtpMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axios.get(`${backendUrl}/otp/send-invite-otp`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data;
+        },
+        onSuccess: (response: any) => {
+            const email = response.data.email;
+            setUserEmail(email);
+            toast({ title: "OTP Sent Successfully", description: `Check your mail: ${email}`, duration: 3000 });
+        },
+        onError: (error: any) => {
+            toast({ title: "OTP Sent Failed", description: `Error: ${error.message}`, duration: 3000 });
+        },
+    });
 
-    };
     const verifyOtpMutation = useMutation({
         mutationFn: async () => {
             const response = await axios.post(`${backendUrl}/otp/verify`, {
@@ -80,298 +75,176 @@ const AcceptInvitePage = () => {
             return response.data;
         },
         onSuccess: (data) => {
-            console.log("OTP verification successfull:", data);
-            toast({
-                title: "Otp Verified",
-                description: "Otp Verification successfull",
-                duration: 3000
-            })
-            const { token } = data.data;
-            setOtpToken(token);
-            setShowOtpPage(false)
+            const { token: tok } = data.data;
+            setOtpToken(tok);
+            toast({ title: "Otp Verified", description: "Otp Verification successful", duration: 3000 });
+            setShowOtpPage(false);
             setShowSetPassWord(true);
         },
-        onError: (error: Error) => {
-            toast({
-                title: "Otp Not Verified",
-                description: "Otp Verification Failed",
-                duration: 3000
-            })
-            console.error("OTP verification failed:", error.message);
+        onError: () => {
+            toast({ title: "Otp Not Verified", description: "Otp Verification Failed", duration: 3000 });
         },
     });
 
-    const handleOtpVerify = (event: any) => {
+    const handleVerifyClick = (event: any) => {
         event.preventDefault();
-        verifyOtpMutation.mutate()
+        setShowOtpPage(true);
+        sendOtpMutation.mutate();
     };
 
-
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-    const sendOtpMutation = useMutation({
-        mutationFn: async () => {
-            const response = await axios.get(`${backendUrl}/otp/send-invite-otp`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            return response.data;
-        },
-        onSuccess: (response: any) => {
-            console.log("OTP sent successfully.");
-            const email = response.data.email;
-            setUserEmail(email)
-            toast({
-                title: "OTP Sent Successfully",
-                description: `Check your mail: ${email}`,
-                duration: 3000
-            });
-        },
-        onError: (error: any) => {
-            toast({
-                title: "OTP Sent Failed",
-                description: `Error: ${error.message}`,
-                duration: 3000
-            });
-            console.error("Error sending OTP:", error.message);
-        },
-    });
     const handleResend = () => {
-        sendOtpMutation.mutate(undefined, {
-          onSuccess: () => {
-            toast({
-              title: "OTP Resent Successfully",
-              description: "Check Your mail ",
-            });
-          },
-          onError: (error) => {
-            toast({
-              title: "Failed to send OTP",
-              description: "Try again later",
-            });
-            console.error("Error Response: aries", error);
-          },
-        });
-      };
+        sendOtpMutation.mutate();
+    };
+
+    const slots = [0, 1, 2, 3, 4, 5];
+
+    const authCardClass = "bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl";
+    const bgClass = "min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4";
+    const inputClass = "w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all";
 
     if (showOtpPage) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-                <div className="absolute top-8">
-                    <Image src={logo} alt="logo" width={120} height={32} className="h-8 w-auto" />
-                </div>
-
-                <div className="w-full max-w-md px-6 py-8 bg-white border rounded-lg shadow-md">
-                    <div className="flex flex-col items-center justify-center mb-4">
-                        <h1 className="text-2xl font-semibold text-center">
-                            OTP Verification
-                        </h1>
-                    </div>
-
-                    <p className="text-gray-600 mb-6 text-sm text-center">
-                        Enter the OTP to verify your account.
-                    </p>
-                    <form className="space-y-6" onSubmit={handleOtpVerify}>
-                        <div className="flex flex-col items-center space-y-4">
-                            <InputOTP
-                                maxLength={6}
-                                value={value}
-                                onChange={(value) => setValue(value)}
-                            >
-                                <InputOTPGroup className="flex justify-center items-center space-x-2">
-                                    {[...Array(6)].map((_, index) => (
-                                        <InputOTPSlot key={index} index={index} />
-                                    ))}
-                                </InputOTPGroup>
-                            </InputOTP>
-
-                            <div className="text-center text-sm text-gray-600">
-                                {value === "" ? (
-                                    <>Enter the verification code.</>
-                                ) : (
-                                    <>Code entered: {value}</>
-                                )}
-                            </div>
+            <div className={bgClass}>
+                <div className="relative w-full max-w-md">
+                    <div className="text-center mb-8">
+                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+                            <ShieldCheck className="w-7 h-7 text-white" />
                         </div>
-
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={verifyOtpMutation.isPending}
-                        >
-                            {verifyOtpMutation.isPending ? "Verifying..." : "Verify Code"}
-                        </Button>
-
-                        <p className="text-center text-sm text-gray-600">
-                            Didnâ€™t receive the code?{" "}
-                            <button
-                                type="button"
-                                className="text-teal-600 hover:underline font-medium"
-                                onClick={handleResend}
-                            >
+                        <h1 className="text-2xl font-bold text-white tracking-tight">OTP Verification</h1>
+                        <p className="text-slate-400 text-sm mt-1">Enter the 6-digit code sent to {userEmail}</p>
+                    </div>
+                    <div className={authCardClass}>
+                        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); verifyOtpMutation.mutate(); }}>
+                            <div className="flex justify-center gap-2">
+                                {slots.map((i) => (
+                                    <input
+                                        key={i}
+                                        type="text"
+                                        maxLength={1}
+                                        value={value[i] || ""}
+                                        onChange={(e) => {
+                                            const char = e.target.value.replace(/\D/, "");
+                                            const arr = value.split("");
+                                            arr[i] = char;
+                                            setValue(arr.join("").slice(0, 6));
+                                            if (char && i < 5) document.getElementById(`invite-otp-${i + 1}`)?.focus();
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Backspace" && !value[i] && i > 0) document.getElementById(`invite-otp-${i - 1}`)?.focus();
+                                        }}
+                                        id={`invite-otp-${i}`}
+                                        className="w-11 h-12 text-center text-lg font-bold rounded-xl bg-white/10 border-2 border-white/20 text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                    />
+                                ))}
+                            </div>
+                            <V3Button type="submit" isLoading={verifyOtpMutation.isPending} className="w-full" size="lg">
+                                {!verifyOtpMutation.isPending && <ArrowRight className="h-4 w-4 mr-1" />}
+                                Verify Code
+                            </V3Button>
+                        </form>
+                        <p className="text-center text-slate-400 text-sm mt-5">
+                            Didn&apos;t receive?{" "}
+                            <button type="button" className="text-indigo-400 font-semibold hover:text-indigo-300" onClick={handleResend} disabled={sendOtpMutation.isPending}>
                                 {sendOtpMutation.isPending ? "Resending..." : "Resend"}
                             </button>
                         </p>
-                    </form>
-
-                    <div className="my-6 text-center relative">
-                        <span className="px-2 bg-white text-gray-500 text-sm relative z-10">
-                            Or Login With
-                        </span>
-                        <div className="absolute top-1/2 left-0 w-full h-px bg-gray-200 -z-0"></div>
                     </div>
-
-                    {/* Google Login Button */}
-                    {/* <Button variant="outline" className="w-full flex gap-2">
-            <Image width={20} height={20} src={google} alt="google logo" className="w-5 h-5" />
-            Google Account
-          </Button> */}
-                    <p className="text-center text-gray-500 text-xs mt-8">
-                        &copy;SecureXAi Corp 2024 All Rights Reserved
-                    </p>
                 </div>
             </div>
         );
     }
 
-
     if (showSetPassWord) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-                <div className="absolute top-8">
-                    <Image src={logo} alt="logo" width={120} height={32} className="h-8 w-auto" />
-                </div>
-
-                <div className="w-full max-w-md px-6 py-8 bg-white border rounded-lg shadow-md">
-                    <h1 className="text-2xl font-semibold text-center mb-4">
-                        Set Your Password
-                    </h1>
-
-                    <p className="text-gray-600 mb-6 text-sm text-center">
-                        Create a new password to secure your account.
-                    </p>
-
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div className="space-y-4">
-                            {/* New Password Input */}
-                            <div className="py-2">
-                                <Label className="block mb-2 text-gray-700 font-medium">
-                                    Enter New Password <span className="text-red-500">*</span>
-                                </Label>
+            <div className={bgClass}>
+                <div className="relative w-full max-w-md">
+                    <div className="text-center mb-8">
+                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+                            <Lock className="w-7 h-7 text-white" />
+                        </div>
+                        <h1 className="text-2xl font-bold text-white tracking-tight">Set Your Password</h1>
+                        <p className="text-slate-400 text-sm mt-1">Create a strong password for your account</p>
+                    </div>
+                    <div className={authCardClass}>
+                        <form className="space-y-5" onSubmit={handleSubmit}>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-slate-300 block">New Password <span className="text-rose-400">*</span></label>
                                 <div className="relative">
-                                    <Input
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                                    <input
                                         type={isPasswordVisible ? "text" : "password"}
-                                        placeholder="Enter your password here"
-                                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                        placeholder="Enter password"
+                                        className={`${inputClass} pr-10`}
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
-                                    <div
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-500 bg-gray-100 rounded-full cursor-pointer"
-                                        onClick={togglePasswordVisibility}
-                                    >
-                                        {isPasswordVisible ? <Eye /> : <EyeOff />}
-                                    </div>
+                                    <button type="button" onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300">
+                                        {isPasswordVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </button>
                                 </div>
                             </div>
-
-                            {/* Confirm Password Input */}
-                            <div className="py-2">
-                                <Label className="block mb-2 text-gray-700 font-medium">
-                                    Confirm New Password <span className="text-red-500">*</span>
-                                </Label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-slate-300 block">Confirm Password <span className="text-rose-400">*</span></label>
                                 <div className="relative">
-                                    <Input
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                                    <input
                                         type={isPasswordVisible ? "text" : "password"}
-                                        placeholder="Confirm your password here"
-                                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                        placeholder="Confirm password"
+                                        className={`${inputClass} pr-10`}
                                         required
-
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                     />
-                                    <div
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-500 bg-gray-100 rounded-full cursor-pointer"
-                                        onClick={togglePasswordVisibility}
-                                    >
-                                        {isPasswordVisible ? <Eye /> : <EyeOff />}
-                                    </div>
                                 </div>
                             </div>
-
-                            {/* Submit Button */}
-                            <div className="pt-4">
-                                <Button
-                                    type="submit"
-                                    className="w-full px-4 py-2 text-white bg-teal-900 hover:bg-teal-800 rounded-md transition-colors"
-                                >
-                                    Set Password
-                                </Button>
-                            </div>
-                        </div>
-                    </form>
-
-
-                    <p className="text-center text-gray-500 text-xs mt-8">
-                        &copy; SecureXAi Corp 2024 All Rights Reserved
-                    </p>
+                            <V3Button type="submit" isLoading={resetPasswordMutation.isPending} className="w-full" size="lg">
+                                {!resetPasswordMutation.isPending && <ArrowRight className="h-4 w-4 mr-1" />}
+                                Set Password
+                            </V3Button>
+                        </form>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-
-        <div className="min-h-screen flex flex-col items-center justify-center bg-white p-2">
-            <div className="absolute top-8">
-                <Image src={logo} alt="logo" width={120} height={32} className="h-8 w-auto" />
-            </div>
-            <div className="w-full max-w-md px-6 py-8 bg-white border border-primary-50 rounded-lg shadow-md">
-                <div className="flex flex-col items-center justify-center mb-4">
-                    <div className="flex items-center gap-2">
-                        <h1 className="text-2xl font-semibold text-center">
-                            Accept Invitation
-                        </h1>
+        <div className={bgClass}>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+            <div className="relative w-full max-w-md">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+                        <ShieldCheck className="w-7 h-7 text-white" />
                     </div>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">Accept Invitation</h1>
+                    <p className="text-slate-400 text-sm mt-1">Join your organization by verifying your invitation</p>
                 </div>
 
-                {!token && (
-                    <p className="text-red-500 text-center mb-4">
-                        No token found in the query string.
+                <div className={authCardClass}>
+                    {!token && (
+                        <p className="text-rose-400 text-center mb-4 text-sm">No invitation token found in the URL.</p>
+                    )}
+
+                    <form className="space-y-5" onClick={handleVerifyClick}>
+                        <V3Button type="submit" isLoading={sendOtpMutation.isPending} className="w-full" size="lg">
+                            {!sendOtpMutation.isPending && <ArrowRight className="h-4 w-4 mr-1" />}
+                            Accept & Verify Invitation
+                        </V3Button>
+                    </form>
+
+                    <p className="text-center text-slate-400 text-sm mt-5">
+                        Don&apos;t have an account?{" "}
+                        <a href="/auth/signup" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+                            Create Account
+                        </a>
                     </p>
-                )}
+                </div>
 
-                <form className="space-y-4" onClick={handleVerifyClick}>
-                    {/* {token && (
-                        <div>
-                            <p className="text-gray-600 mb-6 text-sm text-center">
-                                A token has been detected. Please verify to proceed.
-                            </p>
-                            <Input
-                                type="text"
-                                value={token}
-                                readOnly
-                                className="bg-gray-100 cursor-not-allowed"
-                            />
-                        </div>
-                    )} */}
-
-                    <Button className="w-full" type="submit" >
-                        Verify
-                    </Button>
-                </form>
-
-                <p className="text-center mt-6 text-sm">
-                    Don&apos;t have an account?{" "}
-                    <a href="/auth/signup" className="text-teal-600 hover:underline">
-                        Create an Account
-                    </a>
+                <p className="text-center text-slate-600 text-xs mt-6">
+                    © SecureXAi Corp 2024. All Rights Reserved
                 </p>
             </div>
-            <p className="text-center text-gray-500 text-xs mt-8">
-                &copy; SecureXAi Corp 2024 All Right Reserved
-            </p>
         </div>
     );
 };

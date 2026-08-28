@@ -27,7 +27,10 @@ def count_tokens(text: str) -> int:
     return len(_get_encoder().encode(text))
 
 
-def chunk_text(text: str) -> list:
+def chunk_text(text: str, row_size: int = 25, structured_rows: bool = False) -> list:
+    if structured_rows:
+        return _chunk_rows(text, row_size)
+
     nlp = _get_nlp()
     nlp.max_length = max(len(text) + 1000, nlp.max_length)
     doc = nlp(text)
@@ -82,5 +85,31 @@ def chunk_text(text: str) -> list:
 
         if overlap_sentences > 0 and i < len(sentence_tokens):
             i -= overlap_sentences
+
+    return chunks
+
+
+def _chunk_rows(text: str, row_size: int) -> list:
+    if row_size < 1:
+        raise ValueError("row_size must be a positive integer")
+
+    rows = [line.strip() for line in text.splitlines() if line.strip()]
+    if not rows:
+        return []
+
+    chunks = []
+    chunk_seq = 0
+
+    for start in range(0, len(rows), row_size):
+        row_block = rows[start:start + row_size]
+        chunk_text_str = "\n".join(row_block)
+
+        chunks.append({
+            "chunk_seq": chunk_seq,
+            "text": chunk_text_str,
+            "token_count": count_tokens(chunk_text_str),
+            "row_count": len(row_block),
+        })
+        chunk_seq += 1
 
     return chunks

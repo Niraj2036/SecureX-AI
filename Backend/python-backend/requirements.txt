@@ -4,8 +4,10 @@ dnspython
 pydantic
 pymupdf
 python-docx
+docling
 spacy
 faker
 requests
 python-dotenv
 tiktoken
+openpyxl

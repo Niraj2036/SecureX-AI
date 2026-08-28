@@ -13,6 +13,7 @@ class Document(BaseModel):
     name: str
     url: str
     access: Access
+    row_size: int = Field(default=25, ge=1)
 
 
 class UserDetails(BaseModel):

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from models.schemas import IngestPayload, Document, UserDetails
-from pipeline.extractor import extract_text
+from pipeline.extractor import detect_document_type, extract_text
 from pipeline.anonymizer import anonymize_text
 from pipeline.chunker import chunk_text
 from pipeline.embedder import embed_texts
@@ -70,6 +70,7 @@ def _process_single_document(doc: Document, user: UserDetails, job_id: str) -> d
 
     logger.info(f"[{doc_id}] Extracting text from '{doc.name}'...")
     raw_text = extract_text(doc.url, doc.name)
+    document_type = detect_document_type(doc.name)
 
     if not raw_text or not raw_text.strip():
         raise ValueError(f"No text could be extracted from document '{doc.name}'")
@@ -78,7 +79,11 @@ def _process_single_document(doc: Document, user: UserDetails, job_id: str) -> d
     anonymized_text = anonymize_text(raw_text, user.orgId, doc_id)
 
     logger.info(f"[{doc_id}] Chunking text...")
-    chunks = chunk_text(anonymized_text)
+    chunks = chunk_text(
+        anonymized_text,
+        row_size=doc.row_size,
+        structured_rows=document_type in {"csv", "xlsx", "xls"}
+    )
 
     if not chunks:
         raise ValueError(f"No chunks produced from document '{doc.name}'")

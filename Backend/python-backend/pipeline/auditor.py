@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from models.schemas import UserDetails
 from db.mongo import get_audit_collection
 
-def log_query(user: UserDetails, question: str, answer: str, accessed_chunks: list) -> str:
+def log_query(user: UserDetails, question: str, answer: str, accessed_chunks: list, compliance_result: dict = None) -> str:
     col = get_audit_collection()
     
     query_id = str(uuid.uuid4())
@@ -19,6 +19,9 @@ def log_query(user: UserDetails, question: str, answer: str, accessed_chunks: li
         "num_chunks_retrieved": len(accessed_chunks),
         "timestamp": datetime.now(timezone.utc)
     }
+    
+    if compliance_result:
+        audit_doc["compliance"] = compliance_result
     
     col.insert_one(audit_doc)
     return query_id

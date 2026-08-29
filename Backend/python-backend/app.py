@@ -94,14 +94,35 @@ def query():
             # 3. Retrieve chunks with vector search (filtered by access)
             chunks = retrieve_chunks(question_embedding, authorized_doc_ids, limit=5)
             
-            # 4. Generate answer and de-anonymize
+            # 4. Generate answer
             from pipeline.llm import generate_answer
             raw_answer = generate_answer(anonymized_question, chunks)
-            answer = deanonymize_text(raw_answer)
             
-        # 5. Log audit
+            # 5. Run Compliance Pipeline
+            from pipeline.compliance import run_compliance_pipeline
+            req_id_ans = f"ans_{uuid.uuid4().hex[:8]}"
+            response_embeddings = embed_texts([raw_answer], req_id_ans)
+            response_embedding = response_embeddings[0] if response_embeddings else []
+            
+            compliance_result = run_compliance_pipeline(
+                raw_answer=raw_answer,
+                question_embedding=question_embedding,
+                chunks=chunks,
+                user_details=user,
+                response_embedding=response_embedding
+            )
+            
+            from pipeline.anonymizer import deanonymize_text
+            if compliance_result["terminal_decision"] == "BLOCK":
+                answer = compliance_result["action_taken"]
+            else:
+                answer = deanonymize_text(raw_answer)
+                if compliance_result["terminal_decision"] == "FLAG":
+                    answer = f"{compliance_result['action_taken']}\n\n{answer}"
+            
+        # 6. Log audit
         from pipeline.auditor import log_query
-        query_id = log_query(user, question, answer, chunks)
+        query_id = log_query(user, question, answer, chunks, compliance_result if authorized_doc_ids else None)
         
         return jsonify({
             "query_id": query_id,

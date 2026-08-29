@@ -106,7 +106,7 @@ export default function EmployeePage() {
         title="Employee Directory"
         description="Manage employees, organizational roles, team assignments, and profile access."
         badgeText={`${totalEmployees} Members`}
-        badgeIcon={<Users className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />}
+        badgeIcon={<Users className="h-3 w-3 text-amber-600 dark:text-amber-500" />}
       >
         <V3Button onClick={() => setInviteOpen(true)}>
           <UserPlus className="h-4 w-4 mr-1.5" />
@@ -243,7 +243,7 @@ export default function EmployeePage() {
                   <tr key={emp.id} className="hover:bg-muted/30 transition-colors">
                     <td className="p-3.5 pl-4">
                       <div className="flex items-center space-x-3">
-                        <div className="h-9 w-9 rounded-full bg-indigo-500/10 text-indigo-600 font-bold text-xs flex items-center justify-center border border-indigo-500/20">
+                        <div className="h-9 w-9 rounded-full bg-amber-500/10 text-amber-600 font-bold text-xs flex items-center justify-center border border-amber-500/20">
                           {emp.name?.[0]?.toUpperCase()}
                         </div>
                         <div>

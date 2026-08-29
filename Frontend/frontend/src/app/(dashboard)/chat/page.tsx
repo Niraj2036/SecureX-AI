@@ -75,7 +75,7 @@ export default function ChatPage() {
         title="AI Assistant"
         description="Ask questions about your organization, employees, and documents."
         badgeText="Powered by AI"
-        badgeIcon={<Sparkles className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />}
+        badgeIcon={<Sparkles className="h-3 w-3 text-amber-600 dark:text-amber-500" />}
       />
 
       {/* Chat Container */}
@@ -88,7 +88,7 @@ export default function ChatPage() {
               className={`flex items-start gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {message.role === "assistant" && (
-                <div className="h-8 w-8 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center flex-shrink-0 border border-indigo-500/20">
+                <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0 border border-amber-500/20">
                   <Bot className="h-4 w-4" />
                 </div>
               )}
@@ -96,7 +96,7 @@ export default function ChatPage() {
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                   message.role === "user"
-                    ? "bg-indigo-600 text-white rounded-tr-sm"
+                    ? "bg-amber-600 text-white rounded-tr-sm"
                     : "bg-muted text-foreground rounded-tl-sm border border-border/50"
                 }`}
               >
@@ -113,7 +113,7 @@ export default function ChatPage() {
 
           {isLoading && (
             <div className="flex items-start gap-3 justify-start">
-              <div className="h-8 w-8 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center border border-indigo-500/20">
+              <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center border border-amber-500/20">
                 <Bot className="h-4 w-4" />
               </div>
               <div className="max-w-[75%] rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm bg-muted text-muted-foreground border border-border/50 flex items-center gap-2">
@@ -138,12 +138,12 @@ export default function ChatPage() {
                 handleSend();
               }
             }}
-            className="flex-1 h-10 rounded-xl border border-border/80 bg-background px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+            className="flex-1 h-10 rounded-xl border border-border/80 bg-background px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
           />
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className="h-10 w-10 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none flex-shrink-0"
+            className="h-10 w-10 rounded-xl bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:pointer-events-none flex-shrink-0"
           >
             <Send className="h-4 w-4" />
           </button>

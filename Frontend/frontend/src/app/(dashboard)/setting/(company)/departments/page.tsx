@@ -77,7 +77,7 @@ const Department = () => {
         title="Departments"
         description="Manage organizational departments and their membership."
         badgeText={`${totalDepartments} Departments`}
-        badgeIcon={<Building2 className="h-3 w-3 text-indigo-600" />}
+        badgeIcon={<Building2 className="h-3 w-3 text-amber-600" />}
       >
         <div className="flex items-center gap-2">
           {selectedDepartment && (
@@ -134,7 +134,7 @@ const Department = () => {
                 departments.map((dept) => (
                   <tr
                     key={dept.id}
-                    className={`hover:bg-muted/30 transition-colors cursor-pointer ${selectedId === dept.id ? "bg-indigo-500/5" : ""}`}
+                    className={`hover:bg-muted/30 transition-colors cursor-pointer ${selectedId === dept.id ? "bg-amber-500/5" : ""}`}
                     onClick={() => setSelectedId(selectedId === dept.id ? null : dept.id)}
                   >
                     <td className="p-3.5 pl-4">
@@ -148,14 +148,14 @@ const Department = () => {
                     </td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-600 font-bold text-xs flex items-center justify-center border border-indigo-500/20">
+                        <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-600 font-bold text-xs flex items-center justify-center border border-amber-500/20">
                           {dept.name?.[0]?.toUpperCase()}
                         </div>
                         <span className="font-medium text-foreground">{dept.name}</span>
                       </div>
                     </td>
                     <td className="p-3.5">
-                      <span className="inline-flex items-center rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-600 border border-indigo-500/20 capitalize">
+                      <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-amber-600 border border-amber-500/20 capitalize">
                         {dept.type || "Department"}
                       </span>
                     </td>
@@ -204,7 +204,7 @@ const Department = () => {
                 onClick={() => setCurrentPage(page)}
                 className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${
                   currentPage === page
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-amber-600 text-white"
                     : "hover:bg-muted text-muted-foreground"
                 }`}
               >

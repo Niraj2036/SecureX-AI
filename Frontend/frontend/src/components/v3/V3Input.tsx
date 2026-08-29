@@ -23,7 +23,7 @@ export const V3Input = React.forwardRef<HTMLInputElement, V3InputProps>(
           )}
           <input
             ref={ref}
-            className={`w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${
+            className={`w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all ${
               icon ? "pl-9" : ""
             } ${error ? "border-rose-500 focus:ring-rose-500" : ""} ${className}`}
             {...props}

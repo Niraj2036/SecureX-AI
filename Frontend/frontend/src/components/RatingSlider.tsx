@@ -45,7 +45,7 @@ const RatingSlider = ({ options, value, onChange }: RatingSliderProps) => {
                 cursor-pointer transition-colors
                 ${
                   option.value === selectedValue
-                    ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/40 text-secondary-700"
+                    ? "border-amber-500 bg-amber-50/50 dark:bg-amber-950/40 text-secondary-700"
                     : "border-gray-200 bg-white text-gray-600"
                 }
               `}

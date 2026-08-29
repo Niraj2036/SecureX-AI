@@ -38,7 +38,7 @@ const Page = () => {
     return (
       <div className="h-96 w-full flex items-center justify-center">
         <div className="flex items-center space-x-3 text-muted-foreground">
-          <div className="h-5 w-5 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+          <div className="h-5 w-5 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
           <span className="text-sm">Loading employee profile...</span>
         </div>
       </div>
@@ -56,12 +56,12 @@ const Page = () => {
 
   const user = userProfileData.data;
   const statusColor = user?.status === "active" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 border-amber-500/20";
-  const roleColor = "bg-indigo-500/10 text-indigo-600 border-indigo-500/20";
+  const roleColor = "bg-amber-500/10 text-amber-600 border-amber-500/20";
 
   return (
     <div className="space-y-6">
       {/* Profile Hero Banner */}
-      <div className="v3-card relative overflow-hidden p-6 md:p-8 bg-gradient-to-r from-indigo-600 via-violet-600 to-slate-900 text-white border-0 shadow-xl rounded-xl">
+      <div className="v3-card relative overflow-hidden p-6 md:p-8 bg-gradient-to-r from-amber-600 via-amber-600 to-slate-900 text-white border-0 shadow-xl rounded-xl">
         <div className="absolute -right-16 -bottom-16 opacity-10 pointer-events-none">
           <User className="w-64 h-64" />
         </div>
@@ -78,11 +78,11 @@ const Page = () => {
                 {user?.status || "Active"}
               </span>
             </div>
-            <p className="text-indigo-100 text-sm flex items-center gap-1.5">
+            <p className="text-amber-100 text-sm flex items-center gap-1.5">
               <Briefcase className="h-3.5 w-3.5" />
               {user?.designation || "Team Member"}
             </p>
-            <p className="text-indigo-200 text-xs flex items-center gap-1.5 mt-0.5">
+            <p className="text-amber-300 text-xs flex items-center gap-1.5 mt-0.5">
               <Mail className="h-3.5 w-3.5" />
               {user?.email}
             </p>
@@ -105,7 +105,7 @@ const Page = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2.5 text-sm font-semibold capitalize transition-colors border-b-2 ${
               activeTab === tab
-                ? "border-indigo-600 text-indigo-600"
+                ? "border-amber-600 text-amber-600"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -120,7 +120,7 @@ const Page = () => {
           {/* Organization Details */}
           <V3Card className="p-5">
             <h3 className="text-sm font-bold flex items-center gap-2 text-foreground mb-4">
-              <Building2 className="h-4 w-4 text-indigo-600" />
+              <Building2 className="h-4 w-4 text-amber-600" />
               Organization Details
             </h3>
             <div className="space-y-3 text-sm">
@@ -141,7 +141,7 @@ const Page = () => {
           {/* Employment Information */}
           <V3Card className="p-5">
             <h3 className="text-sm font-bold flex items-center gap-2 text-foreground mb-4">
-              <ShieldCheck className="h-4 w-4 text-indigo-600" />
+              <ShieldCheck className="h-4 w-4 text-amber-600" />
               Employment Information
             </h3>
             <div className="space-y-3 text-sm">
@@ -163,7 +163,7 @@ const Page = () => {
       {activeTab === "documents" && (
         <V3Card className="p-5">
           <h3 className="text-sm font-bold flex items-center gap-2 text-foreground mb-4">
-            <FileText className="h-4 w-4 text-indigo-600" />
+            <FileText className="h-4 w-4 text-amber-600" />
             Employee Documents
           </h3>
           {user?.employeeDocuments && user.employeeDocuments.length > 0 ? (
@@ -171,13 +171,13 @@ const Page = () => {
               {user.employeeDocuments.map((doc: any) => (
                 <div key={doc.id} className="py-3 flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <FileText className="h-5 w-5 text-indigo-600" />
+                    <FileText className="h-5 w-5 text-amber-600" />
                     <div>
                       <p className="text-sm font-medium text-foreground">{doc.title}</p>
                       <p className="text-xs text-muted-foreground">{doc.type}</p>
                     </div>
                   </div>
-                  <a href={doc.fileUrl} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium hover:underline flex items-center gap-1">
+                  <a href={doc.fileUrl} target="_blank" rel="noreferrer" className="text-xs text-amber-600 hover:text-amber-700 font-medium hover:underline flex items-center gap-1">
                     View <ChevronRight className="h-3 w-3" />
                   </a>
                 </div>

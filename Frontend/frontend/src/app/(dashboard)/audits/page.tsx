@@ -43,7 +43,7 @@ export default function AuditsPage() {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="flex items-center gap-3 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin text-indigo-600" />
+          <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
           <span className="text-sm">Loading audit history...</span>
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function AuditsPage() {
         title="Security Audit Logs"
         description="Review AI assistant query history and document access audit trail."
         badgeText={`${audits.length} Queries`}
-        badgeIcon={<Shield className="h-3 w-3 text-indigo-600" />}
+        badgeIcon={<Shield className="h-3 w-3 text-amber-600" />}
       />
 
       <V3Card className="overflow-hidden p-0">
@@ -83,7 +83,7 @@ export default function AuditsPage() {
 
                 {/* Question */}
                 <div className="mb-2 flex items-start gap-2.5">
-                  <div className="h-6 w-6 rounded-full bg-indigo-500/10 text-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="h-6 w-6 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <MessageSquare className="h-3 w-3" />
                   </div>
                   <div>

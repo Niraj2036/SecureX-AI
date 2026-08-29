@@ -202,30 +202,30 @@ const Page = () => {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full max-w-lg mx-auto">
                     <div className="space-y-2">
                         <label htmlFor="firstName" className="text-xs font-semibold text-foreground block">First Name</label>
-                        <input id="firstName" placeholder="First Name" {...register('firstName', { required: 'First name is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+                        <input id="firstName" placeholder="First Name" {...register('firstName', { required: 'First name is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" />
                         {errors.firstName && <span className="text-red-500 text-sm">{String(errors.firstName.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
                         <label htmlFor="lastName" className="text-xs font-semibold text-foreground block">Last Name</label>
-                        <input id="lastName" placeholder="Last Name" {...register('lastName', { required: 'Last name is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+                        <input id="lastName" placeholder="Last Name" {...register('lastName', { required: 'Last name is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" />
                         {errors.lastName && <span className="text-red-500 text-sm">{String(errors.lastName.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
                         <label htmlFor="email" className="text-xs font-semibold text-foreground block">Email Address</label>
-                        <input id="email" type="email" placeholder="Email Address" {...register('email', { required: 'Email is required', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' } })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+                        <input id="email" type="email" placeholder="Email Address" {...register('email', { required: 'Email is required', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' } })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" />
                         {errors.email && <span className="text-red-500 text-sm">{String(errors.email.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
                         <label htmlFor="phone" className="text-xs font-semibold text-foreground block">Phone Number</label>
-                        <input id="phone" type="tel" placeholder="Phone Number" {...register('phone', { required: 'Phone number is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+                        <input id="phone" type="tel" placeholder="Phone Number" {...register('phone', { required: 'Phone number is required' })} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" />
                         {errors.phone && <span className="text-red-500 text-sm">{String(errors.phone.message)}</span>}
                     </div>
 
                     <div className="space-y-2">
-                        <label htmlFor="password" className="text-xs font-semibold text-foreground block">Password <Link href="/auth/forgot-password" className="text-sm text-indigo-600 hover:underline">Forgot Password?</Link></label>
+                        <label htmlFor="password" className="text-xs font-semibold text-foreground block">Password <Link href="/auth/forgot-password" className="text-sm text-amber-600 hover:underline">Forgot Password?</Link></label>
                         <input id="password" type="password" placeholder="Password" {...register('password', { required: 'Password is required' })} disabled className="w-full h-9 rounded-lg border border-border/80 bg-muted px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none transition-all opacity-60" />
                         {errors.password && <span className="text-red-500 text-sm">{String(errors.password.message)}</span>}
                     </div>

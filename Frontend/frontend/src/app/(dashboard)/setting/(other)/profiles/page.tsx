@@ -25,7 +25,7 @@ const Page = () => {
         title="Role Profiles & Permissions"
         description="Configure permission profiles and access policies for each organizational role."
         badgeText="Access Control"
-        badgeIcon={<ShieldCheck className="h-3 w-3 text-indigo-600" />}
+        badgeIcon={<ShieldCheck className="h-3 w-3 text-amber-600" />}
       />
 
       <div className="flex gap-6">
@@ -39,11 +39,11 @@ const Page = () => {
                 onClick={() => setActiveTab(id)}
                 className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
                   activeTab === id
-                    ? "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400"
+                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-500"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                <Icon className={`h-4 w-4 flex-shrink-0 ${activeTab === id ? "text-indigo-600" : ""}`} />
+                <Icon className={`h-4 w-4 flex-shrink-0 ${activeTab === id ? "text-amber-600" : ""}`} />
                 {label}
               </button>
             ))}

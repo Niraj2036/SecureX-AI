@@ -290,7 +290,7 @@ function DropZone({
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
         className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-          isDragging ? "border-indigo-500 bg-indigo-500/5" : "border-border hover:border-indigo-500/50 hover:bg-muted/30"
+          isDragging ? "border-amber-500 bg-amber-500/5" : "border-border hover:border-amber-500/50 hover:bg-muted/30"
         }`}
       >
         <input
@@ -300,7 +300,7 @@ function DropZone({
           multiple={multiple}
           onChange={(e) => onFilesSelected(Array.from(e.target.files || []))}
         />
-        <CloudUpload className="h-8 w-8 text-indigo-500 mx-auto mb-2" />
+        <CloudUpload className="h-8 w-8 text-amber-500 mx-auto mb-2" />
         <p className="text-xs font-semibold text-foreground">
           {isDragging ? "Drop files here" : "Click or drag & drop files"}
         </p>
@@ -312,7 +312,7 @@ function DropZone({
           {files.map((file, idx) => (
             <div key={idx} className="flex items-center justify-between p-2.5 bg-muted/40 rounded-lg border text-xs">
               <div className="flex items-center space-x-2 truncate">
-                <FileText className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+                <FileText className="h-4 w-4 text-amber-600 flex-shrink-0" />
                 <span className="font-semibold truncate">{file.name}</span>
                 <span className="text-muted-foreground text-[10px]">({formatFileSize(file.size)})</span>
               </div>
@@ -450,7 +450,7 @@ export default function DocumentsPage() {
         title="Documents Vault"
         description="Manage organization policies, contracts, employee records, and file permissions."
         badgeText={`${totalDocs} Vault Files`}
-        badgeIcon={<FileText className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />}
+        badgeIcon={<FileText className="h-3 w-3 text-amber-600 dark:text-amber-500" />}
       />
 
       <div className="space-y-4">
@@ -517,7 +517,7 @@ export default function DocumentsPage() {
                         <tr key={doc.id} className="hover:bg-muted/30 transition-colors">
                           <td className="p-3.5 pl-4">
                             <div className="flex items-center space-x-3">
-                              <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                              <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
                                 <FileText className="h-4 w-4" />
                               </div>
                               <div>

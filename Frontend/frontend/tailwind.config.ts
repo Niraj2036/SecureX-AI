@@ -10,7 +10,7 @@ export default {
   theme: {
   	extend: {
   		backgroundImage: {
-  			'button-gradient': 'linear-gradient(90deg, rgba(8, 69, 69, 1) 0%, rgba(24, 154, 147, 1) 100%)'
+  			'button-gradient': 'linear-gradient(90deg, rgba(146, 64, 14, 1) 0%, rgba(234, 88, 12, 1) 100%)'
   		},
   		fontFamily: {
   			nunito: [
@@ -228,12 +228,12 @@ export default {
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: '#F8F8F9',
-  				accent: '#084545',
+  				primary: '#1C1714',
+  				accent: '#F59E0B',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))',
-  				'primary-foreground': '#545454',
-  				'accent-foreground': '#FDFEFE'
+  				'primary-foreground': '#A8A29E',
+  				'accent-foreground': '#1C1714'
   			},
   			brand: {
   				DEFAULT: 'hsl(var(--brand))',

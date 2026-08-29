@@ -28,13 +28,13 @@ export function V3Button({
 
   const variantStyles = {
     primary:
-      "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm focus:ring-indigo-500 active:bg-indigo-800",
+      "bg-amber-600 hover:bg-amber-700 text-white shadow-sm focus:ring-amber-500 active:bg-amber-800",
     secondary:
       "bg-slate-800 hover:bg-slate-700 text-white shadow-sm focus:ring-slate-500",
     outline:
-      "border border-border/80 bg-background hover:bg-muted text-foreground focus:ring-indigo-500",
+      "border border-border/80 bg-background hover:bg-muted text-foreground focus:ring-amber-500",
     ghost:
-      "hover:bg-muted text-foreground focus:ring-indigo-500",
+      "hover:bg-muted text-foreground focus:ring-amber-500",
     danger:
       "bg-rose-600 hover:bg-rose-700 text-white shadow-sm focus:ring-rose-500 active:bg-rose-800",
   };

@@ -56,8 +56,8 @@ interface OrgStructure {
 
 function AdminNode({ data }: { data: any }) {
   return (
-    <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-slate-900 text-white rounded-xl p-4 min-w-[210px] shadow-lg border border-white/20">
-      <Handle type="source" position={Position.Bottom} className="!bg-indigo-500 !border-2 !border-white" />
+    <div className="bg-gradient-to-r from-amber-600 via-amber-600 to-slate-900 text-white rounded-xl p-4 min-w-[210px] shadow-lg border border-white/20">
+      <Handle type="source" position={Position.Bottom} className="!bg-amber-500 !border-2 !border-white" />
       <div className="flex items-center gap-3">
         {data.avatar ? (
           <img src={data.avatar} alt={data.name} className="w-10 h-10 rounded-full object-cover border-2 border-white/60" />
@@ -68,7 +68,7 @@ function AdminNode({ data }: { data: any }) {
         )}
         <div>
           <p className="font-bold text-xs text-white leading-tight">{data.name}</p>
-          <p className="text-[10px] text-indigo-200 leading-tight">{data.designation || "Administrator"}</p>
+          <p className="text-[10px] text-amber-300 leading-tight">{data.designation || "Administrator"}</p>
           <span className="mt-1 inline-flex items-center rounded-full bg-white/20 px-1.5 py-0 text-[9px] text-white">
             <ShieldCheck className="h-2.5 w-2.5 mr-1" /> Admin
           </span>
@@ -80,9 +80,9 @@ function AdminNode({ data }: { data: any }) {
 
 function DeptNode({ data }: { data: any }) {
   return (
-    <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl p-3.5 min-w-[200px] shadow-md border border-white/20">
-      <Handle type="target" position={Position.Top} className="!bg-violet-500 !border-2 !border-white" />
-      <Handle type="source" position={Position.Bottom} className="!bg-violet-500 !border-2 !border-white" />
+    <div className="bg-gradient-to-r from-amber-600 to-amber-600 text-white rounded-xl p-3.5 min-w-[200px] shadow-md border border-white/20">
+      <Handle type="target" position={Position.Top} className="!bg-amber-500 !border-2 !border-white" />
+      <Handle type="source" position={Position.Bottom} className="!bg-amber-500 !border-2 !border-white" />
       <div className="flex items-center gap-2 mb-1.5">
         <Building2 className="h-4 w-4 text-white/90" />
         <p className="font-bold text-xs text-white leading-tight">{data.name}</p>
@@ -104,9 +104,9 @@ function DeptNode({ data }: { data: any }) {
 
 function TeamNode({ data }: { data: any }) {
   return (
-    <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl p-3 min-w-[180px] shadow-sm border border-white/20">
-      <Handle type="target" position={Position.Top} className="!bg-indigo-500 !border-2 !border-white" />
-      <Handle type="source" position={Position.Bottom} className="!bg-indigo-500 !border-2 !border-white" />
+    <div className="bg-gradient-to-r from-amber-500 to-blue-600 text-white rounded-xl p-3 min-w-[180px] shadow-sm border border-white/20">
+      <Handle type="target" position={Position.Top} className="!bg-amber-500 !border-2 !border-white" />
+      <Handle type="source" position={Position.Bottom} className="!bg-amber-500 !border-2 !border-white" />
       <div className="flex items-center gap-2 mb-1">
         <Users className="h-3.5 w-3.5 text-white/90" />
         <p className="font-bold text-xs text-white leading-tight">{data.name}</p>
@@ -340,14 +340,14 @@ export default function OrgChartPage() {
         title="Organization Hierarchy"
         description="Interactive tree map showing company administrators, departments, teams, and employee reporting structures."
         badgeText="Visual Tree"
-        badgeIcon={<Network className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />}
+        badgeIcon={<Network className="h-3 w-3 text-amber-600 dark:text-amber-500" />}
       >
         <div className="flex items-center gap-3 text-xs font-medium bg-background border border-border/80 px-3 py-1.5 rounded-lg shadow-sm">
           <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-full bg-indigo-600" /> Admin
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-600" /> Admin
           </span>
           <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-full bg-violet-600" /> Department
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-600" /> Department
           </span>
           <span className="flex items-center gap-1">
             <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> Team

@@ -61,7 +61,7 @@ const Page = () => {
   const onSubmit = (data: z.infer<typeof loginSchema>) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-amber-950 to-slate-900 p-4">
       {/* Grid overlay */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -71,7 +71,7 @@ const Page = () => {
       <div className="relative w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-400 mb-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-500 mb-4">
             <Sparkles className="h-3 w-3" /> SecureX AI V3
           </span>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">Welcome Back</h1>
@@ -90,7 +90,7 @@ const Page = () => {
                   type="email"
                   placeholder="name@company.com"
                   {...register("email")}
-                  className="w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  className="w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                 />
               </div>
               {errors.email && <p className="text-rose-400 text-xs">{errors.email.message}</p>}
@@ -100,7 +100,7 @@ const Page = () => {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-slate-300">Password</label>
-                <Link href="/auth/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+                <Link href="/auth/forgot-password" className="text-xs text-amber-500 hover:text-amber-400 font-medium transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -110,7 +110,7 @@ const Page = () => {
                   type={isPasswordVisible ? "text" : "password"}
                   placeholder="••••••••"
                   {...register("password")}
-                  className="w-full h-10 pl-9 pr-10 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  className="w-full h-10 pl-9 pr-10 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                 />
                 <button
                   type="button"
@@ -156,7 +156,7 @@ const Page = () => {
 
           <p className="text-center text-slate-400 text-sm mt-5">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/signup" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+            <Link href="/auth/signup" className="text-amber-500 font-semibold hover:text-amber-400 transition-colors">
               Create Account
             </Link>
           </p>

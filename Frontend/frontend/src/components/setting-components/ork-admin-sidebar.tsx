@@ -12,9 +12,9 @@ const AdminSideBar = () => {
       <Link href="/setting/admin">
         <div
           className={clsx(
-            "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-indigo-600",
+            "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-amber-600",
             pathname === "/setting/admin"
-              ? "bg-indigo-500/10 text-indigo-600 font-semibold"
+              ? "bg-amber-500/10 text-amber-600 font-semibold"
               : "text-muted-foreground"
           )}
         >
@@ -25,9 +25,9 @@ const AdminSideBar = () => {
       <Link href="/setting/admin/users">
         <div
           className={clsx(
-            "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-indigo-600",
+            "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-amber-600",
             pathname === "/setting/admin/users"
-              ? "bg-indigo-500/10 text-indigo-600 font-semibold"
+              ? "bg-amber-500/10 text-amber-600 font-semibold"
               : "text-muted-foreground"
           )}
         >
@@ -36,13 +36,13 @@ const AdminSideBar = () => {
         </div>
       </Link>
       <div
-        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-indigo-600 cursor-pointer"
+        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-amber-600 cursor-pointer"
       >
         <Bell className="h-4 w-4" />
         Notifications
       </div>
       <div
-        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-indigo-600 cursor-pointer"
+        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-amber-600 cursor-pointer"
       >
         <User className="h-4 w-4" />
         Manage Account

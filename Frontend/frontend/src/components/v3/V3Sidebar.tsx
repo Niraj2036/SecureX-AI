@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -33,10 +33,22 @@ interface NavGroup {
   items: NavItem[];
 }
 
+/** Returns true only when the current pathname exactly matches or is a child of `url`. */
+function isNavActive(pathname: string, url: string): boolean {
+  return pathname === url || pathname.startsWith(url + "/");
+}
+
 export function V3Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [openSettings, setOpenSettings] = useState(pathname.startsWith("/setting"));
+
+  // Auto-open the settings accordion whenever navigating into a /setting route
+  useEffect(() => {
+    if (pathname.startsWith("/setting")) {
+      setOpenSettings(true);
+    }
+  }, [pathname]);
 
   const navGroups: NavGroup[] = [
     {
@@ -74,14 +86,14 @@ export function V3Sidebar() {
       {/* Brand Header */}
       <div className="h-16 px-5 border-b border-slate-800 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center space-x-2.5">
-          <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
+          <div className="h-8 w-8 rounded-lg bg-amber-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
             S
           </div>
           <div>
             <span className="font-extrabold text-sm text-white tracking-tight block leading-none">
               SecureX AI
             </span>
-            <span className="text-[10px] text-indigo-400 font-semibold tracking-wider uppercase block mt-0.5">
+            <span className="text-[10px] text-amber-500 font-semibold tracking-wider uppercase block mt-0.5">
               V3 Enterprise
             </span>
           </div>
@@ -97,24 +109,27 @@ export function V3Sidebar() {
             </h3>
             <div className="space-y-1 pt-1">
               {group.items.map((item) => {
-                const isActive =
-                  pathname === item.url ||
-                  (item.url !== "/dashboard" && pathname.startsWith(item.url));
+                const isActive = isNavActive(pathname, item.url);
                 const Icon = item.icon;
 
                 if (item.subItems) {
+                  // Check if any child route is currently active
+                  const isChildActive = item.subItems.some((sub) =>
+                    isNavActive(pathname, sub.url)
+                  );
+
                   return (
                     <div key={item.name} className="space-y-1">
                       <button
                         onClick={() => setOpenSettings(!openSettings)}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                          isActive
-                            ? "bg-indigo-600 text-white"
+                          isChildActive
+                            ? "bg-slate-800 text-amber-500"
                             : "text-slate-300 hover:bg-slate-800 hover:text-white"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <Icon className="h-4 w-4 shrink-0" />
+                          <Icon className={`h-4 w-4 shrink-0 ${isChildActive ? "text-amber-500" : ""}`} />
                           <span>{item.name}</span>
                         </div>
                         {openSettings ? (
@@ -125,16 +140,25 @@ export function V3Sidebar() {
                       </button>
 
                       {openSettings && (
-                        <div className="ml-4 pl-3 border-l border-slate-800 space-y-1 py-1">
+                        <div className="ml-4 pl-3 border-l border-slate-700 space-y-1 py-1">
                           {item.subItems.map((sub) => {
-                            const isSubActive = pathname === sub.url;
+                            // Determine if this sub-item is a prefix of sibling routes
+                            const hasSiblingWithSamePrefix = item.subItems!.some(
+                              (sibling) =>
+                                sibling.url !== sub.url &&
+                                sibling.url.startsWith(sub.url + "/")
+                            );
+                            const isSubActive = hasSiblingWithSamePrefix
+                              ? pathname === sub.url
+                              : pathname === sub.url ||
+                                pathname.startsWith(sub.url + "/");
                             return (
                               <Link
                                 key={sub.name}
                                 href={sub.url}
                                 className={`block px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors ${
                                   isSubActive
-                                    ? "text-indigo-400 font-semibold bg-slate-800/60"
+                                    ? "text-amber-500 font-semibold bg-slate-800/60"
                                     : "text-slate-400 hover:text-white hover:bg-slate-800/40"
                                 }`}
                               >
@@ -154,7 +178,7 @@ export function V3Sidebar() {
                     href={item.url}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                       isActive
-                        ? "bg-indigo-600 text-white shadow-sm"
+                        ? "bg-amber-600 text-white shadow-sm"
                         : "text-slate-300 hover:bg-slate-800 hover:text-white"
                     }`}
                   >
@@ -171,7 +195,7 @@ export function V3Sidebar() {
       {/* User Footer */}
       <div className="p-3 border-t border-slate-800 bg-slate-900/50">
         <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-800/60">
-          <div className="h-8 w-8 rounded-full bg-indigo-600/20 text-indigo-400 font-bold text-xs flex items-center justify-center border border-indigo-500/30">
+          <div className="h-8 w-8 rounded-full bg-amber-600/20 text-amber-500 font-bold text-xs flex items-center justify-center border border-amber-500/30">
             {session?.user?.name?.[0]?.toUpperCase() || "A"}
           </div>
           <div className="flex-1 min-w-0">

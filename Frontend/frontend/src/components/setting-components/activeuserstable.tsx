@@ -224,7 +224,7 @@ function ActiveUsers() {
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className={`px-3 py-2 ${currentPage === 1 ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
+                  className={`px-3 py-2 ${currentPage === 1 ? "text-gray-400" : "text-black hover:text-amber-600"}`}
                 >
                   Prev
                 </button>
@@ -235,7 +235,7 @@ function ActiveUsers() {
                     <PaginationItem key={page}>
                       <button
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 ${currentPage === page ? "bg-indigo-600 text-white rounded-md" : "text-black hover:text-indigo-600"
+                        className={`px-3 py-2 ${currentPage === page ? "bg-amber-600 text-white rounded-md" : "text-black hover:text-amber-600"
                           }`}
                       >
                         {page}
@@ -247,7 +247,7 @@ function ActiveUsers() {
                 <button
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, paginationPages))}
                   disabled={currentPage === paginationPages}
-                  className={`px-3 py-2 ${currentPage === paginationPages ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
+                  className={`px-3 py-2 ${currentPage === paginationPages ? "text-gray-400" : "text-black hover:text-amber-600"}`}
                 >
                   Next
                 </button>

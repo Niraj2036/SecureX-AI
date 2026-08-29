@@ -196,7 +196,7 @@ const Uploaddata = ({ change, selectedCard }: any) => {
                 <div className="text-sm font-medium">Drop your files here!</div>
               ) : (
                 <div className="flex items-center flex-col gap-2">
-                  <Upload className="w-6 h-6 text-indigo-600" />
+                  <Upload className="w-6 h-6 text-amber-600" />
                   <div className="text-sm font-semibold">
                     Create or Import Classification
                   </div>
@@ -274,7 +274,7 @@ const Uploaddata = ({ change, selectedCard }: any) => {
 
       <footer className="flex row-auto">
         <Button
-          className="bg-white text-indigo-600 hover:bg-muted border border-indigo-500 w-1/2"
+          className="bg-white text-amber-600 hover:bg-muted border border-amber-500 w-1/2"
           onClick={change}
         >
           Cancel

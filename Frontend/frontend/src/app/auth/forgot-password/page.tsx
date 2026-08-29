@@ -54,14 +54,14 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-amber-950 to-slate-900 p-4">
       {/* Background grid pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
       <div className="relative w-full max-w-md">
         {/* Logo / Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-600 shadow-lg shadow-amber-500/30 mb-4">
             <ShieldCheck className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Password Recovery</h1>
@@ -79,7 +79,7 @@ const Page = () => {
                   type="email"
                   placeholder="you@company.com"
                   {...register("email")}
-                  className="w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  className="w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                 />
               </div>
               {errors.email && <p className="text-rose-400 text-xs">{errors.email.message}</p>}
@@ -98,7 +98,7 @@ const Page = () => {
 
           <p className="text-center text-slate-400 text-sm mt-6">
             Remember your password?{" "}
-            <a href="/auth/login" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+            <a href="/auth/login" className="text-amber-500 font-semibold hover:text-amber-400 transition-colors">
               Sign In
             </a>
           </p>

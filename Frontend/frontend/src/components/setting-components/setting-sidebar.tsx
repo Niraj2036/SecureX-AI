@@ -17,31 +17,31 @@ function SettingSidebar() {
         <Link
           href="/setting"
           className={clsx(
-            "w-full flex items-center gap-2 text-foreground px-3 py-2 rounded-md hover:bg-muted hover:text-indigo-600 transition-colors text-sm",
-            { "bg-indigo-500/10 text-indigo-600 font-semibold": pathname === "/setting" }
+            "w-full flex items-center gap-2 text-foreground px-3 py-2 rounded-md hover:bg-muted hover:text-amber-600 transition-colors text-sm",
+            { "bg-amber-500/10 text-amber-600 font-semibold": pathname === "/setting" }
           )}
         >
-          <Building2 className="h-4 w-4 text-indigo-600" />
+          <Building2 className="h-4 w-4 text-amber-600" />
           Company
         </Link>
         <Link
           href="/setting/departments"
           className={clsx(
-            "w-full flex items-center gap-2 text-foreground px-3 py-2 rounded-md hover:bg-muted hover:text-indigo-600 transition-colors text-sm",
-            { "bg-indigo-500/10 text-indigo-600 font-semibold": pathname === "/setting/departments" }
+            "w-full flex items-center gap-2 text-foreground px-3 py-2 rounded-md hover:bg-muted hover:text-amber-600 transition-colors text-sm",
+            { "bg-amber-500/10 text-amber-600 font-semibold": pathname === "/setting/departments" }
           )}
         >
-          <Building className="h-4 w-4 text-indigo-600" />
+          <Building className="h-4 w-4 text-amber-600" />
           Departments
         </Link>
         <Link
           href="/setting/teams"
           className={clsx(
-            "w-full flex items-center gap-2 text-foreground px-3 py-2 rounded-md hover:bg-muted hover:text-indigo-600 transition-colors text-sm",
-            { "bg-indigo-500/10 text-indigo-600 font-semibold": pathname === "/setting/teams" }
+            "w-full flex items-center gap-2 text-foreground px-3 py-2 rounded-md hover:bg-muted hover:text-amber-600 transition-colors text-sm",
+            { "bg-amber-500/10 text-amber-600 font-semibold": pathname === "/setting/teams" }
           )}
         >
-          <Users className="h-4 w-4 text-indigo-600" />
+          <Users className="h-4 w-4 text-amber-600" />
           Teams
         </Link>
       </nav>

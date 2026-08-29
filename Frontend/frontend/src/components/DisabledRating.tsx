@@ -32,7 +32,7 @@ const DisabledRatingSlider = ({ options, value }: RatingSliderProps) => {
                 cursor-not-allowed transition-colors pointer-events-none
                 ${
                   option.value === selectedValue
-                    ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/400 text-white"
+                    ? "border-amber-500 bg-amber-50/50 dark:bg-amber-950/400 text-white"
                     : "border-gray-200 bg-white text-gray-400"
                 }
               `}

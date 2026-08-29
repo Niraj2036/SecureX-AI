@@ -68,7 +68,7 @@ function MemberEditor({ team }: { team: Team }) {
             key={user.id}
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all ${
               isEditMode
-                ? "bg-indigo-100 text-indigo-800 border border-indigo-300"
+                ? "bg-amber-100 text-amber-800 border border-amber-400"
                 : "bg-muted text-muted-foreground border border-border/50"
             }`}
           >
@@ -170,7 +170,7 @@ export default function TeamPage() {
         title="Teams"
         description="View and manage team memberships across your organization."
         badgeText={`${totalTeams} Teams`}
-        badgeIcon={<Users className="h-3 w-3 text-indigo-600" />}
+        badgeIcon={<Users className="h-3 w-3 text-amber-600" />}
       >
         <div className="flex items-center gap-2">
           {selectedId && (
@@ -221,7 +221,7 @@ export default function TeamPage() {
                   <tr key={team.id} className="hover:bg-muted/30 transition-colors">
                     <td className="p-3.5 pl-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="h-8 w-8 rounded-lg bg-violet-500/10 text-violet-600 font-bold text-xs flex items-center justify-center border border-violet-500/20">
+                        <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-600 font-bold text-xs flex items-center justify-center border border-amber-500/20">
                           {team.name?.[0]?.toUpperCase()}
                         </div>
                         <span className="font-semibold text-foreground">{team.name}</span>
@@ -264,7 +264,7 @@ export default function TeamPage() {
               <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Prev
             </V3Button>
             {Array.from({ length: paginationPages }, (_, i) => i + 1).map((page) => (
-              <button key={page} onClick={() => setCurrentPage(page)} className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${currentPage === page ? "bg-indigo-600 text-white" : "hover:bg-muted text-muted-foreground"}`}>
+              <button key={page} onClick={() => setCurrentPage(page)} className={`h-7 w-7 rounded-md text-xs font-medium transition-colors ${currentPage === page ? "bg-amber-600 text-white" : "hover:bg-muted text-muted-foreground"}`}>
                 {page}
               </button>
             ))}

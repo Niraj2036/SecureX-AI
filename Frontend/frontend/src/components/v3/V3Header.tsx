@@ -31,7 +31,7 @@ export function V3Header() {
         {/* Unread Notifications Badge */}
         <button className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
           <Bell className="h-4 w-4" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-indigo-600 animate-pulse" />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-600 animate-pulse" />
         </button>
 
         {/* Profile Avatar Dropdown */}
@@ -40,7 +40,7 @@ export function V3Header() {
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center space-x-2.5 p-1 rounded-lg hover:bg-muted transition-colors focus:outline-none"
           >
-            <div className="h-8 w-8 rounded-full bg-indigo-600/10 text-indigo-600 font-bold text-xs flex items-center justify-center border border-indigo-500/20">
+            <div className="h-8 w-8 rounded-full bg-amber-600/10 text-amber-600 font-bold text-xs flex items-center justify-center border border-amber-500/20">
               {session?.user?.name?.[0]?.toUpperCase() || "A"}
             </div>
             <span className="text-xs font-semibold text-foreground hidden sm:inline-block">

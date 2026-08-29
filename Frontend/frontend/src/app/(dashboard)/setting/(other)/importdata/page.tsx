@@ -28,7 +28,7 @@ const ImportPage: React.FC = () => {
         title="Import Employee Data"
         description="Bulk import employee information from an Excel template file."
         badgeText="Data Import"
-        badgeIcon={<Upload className="h-3 w-3 text-indigo-600" />}
+        badgeIcon={<Upload className="h-3 w-3 text-amber-600" />}
       >
         <V3Button variant="outline" onClick={handleDownloadTemplate}>
           <Download className="h-4 w-4 mr-1.5" />
@@ -42,20 +42,20 @@ const ImportPage: React.FC = () => {
           type="button"
           className={`w-full text-left transition-all rounded-xl border-2 ${
             selectedCard === "Employment"
-              ? "border-indigo-500 bg-indigo-500/5"
-              : "border-border/60 bg-card hover:border-indigo-400/50"
+              ? "border-amber-500 bg-amber-500/5"
+              : "border-border/60 bg-card hover:border-amber-500/50"
           } p-5`}
           onClick={() => setSelectedCard("Employment")}
         >
           <div className="flex items-start gap-4">
-            <div className="h-12 w-12 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center flex-shrink-0">
+            <div className="h-12 w-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0">
               <FileSpreadsheet className="h-6 w-6" />
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-foreground">Upload Employment Data</h3>
                 {selectedCard === "Employment" && (
-                  <CheckCircle className="h-5 w-5 text-indigo-600 flex-shrink-0" />
+                  <CheckCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-1">

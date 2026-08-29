@@ -269,7 +269,7 @@ const PerformancePermissions = () => {
                                                             <div
                                                                 key={option.value}
                                                                 className={`p-3 border rounded-md cursor-pointer flex justify-between items-center ${visibilitySettings[user.id] === option.value
-                                                                    ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/40'
+                                                                    ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/40'
                                                                     : 'hover:bg-gray-50'
                                                                     }`}
                                                                 onClick={() => handleVisibilityChange(user.id, option.value)}
@@ -285,7 +285,7 @@ const PerformancePermissions = () => {
                                                                 </div>
                                                                 <div className="h-4 w-4 rounded-full border border-gray-300 flex items-center justify-center">
                                                                     {visibilitySettings[user.id] === option.value && (
-                                                                        <div className="h-2 w-2 rounded-full bg-indigo-50/50 dark:bg-indigo-950/400"></div>
+                                                                        <div className="h-2 w-2 rounded-full bg-amber-50/50 dark:bg-amber-950/400"></div>
                                                                     )}
                                                                 </div>
                                                             </div>
@@ -332,10 +332,10 @@ const PerformancePermissions = () => {
                             pageRangeDisplayed={3}
                             onPageChange={(selectedItem) => handlePageChange(selectedItem)}
                             containerClassName="flex justify-between items-center w-[250px] mx-auto"
-                            pageClassName="px-3 py-2 text-black hover:text-indigo-600"
-                            activeClassName="bg-indigo-600 text-white rounded-md"
-                            previousClassName={`px-3 py-2 ${currentPage === 1 ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
-                            nextClassName={`px-3 py-2 ${currentPage === paginationPages ? "text-gray-400" : "text-black hover:text-indigo-600"}`}
+                            pageClassName="px-3 py-2 text-black hover:text-amber-600"
+                            activeClassName="bg-amber-600 text-white rounded-md"
+                            previousClassName={`px-3 py-2 ${currentPage === 1 ? "text-gray-400" : "text-black hover:text-amber-600"}`}
+                            nextClassName={`px-3 py-2 ${currentPage === paginationPages ? "text-gray-400" : "text-black hover:text-amber-600"}`}
                             disabledClassName="text-gray-400"
                         />
                     </div>

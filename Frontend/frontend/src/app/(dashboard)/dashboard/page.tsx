@@ -114,7 +114,7 @@ export default function Page() {
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="v3-card relative overflow-hidden p-6 md:p-8 bg-gradient-to-r from-indigo-600 via-violet-600 to-slate-900 text-white border-0 shadow-xl rounded-xl">
+      <div className="v3-card relative overflow-hidden p-6 md:p-8 bg-gradient-to-r from-amber-600 via-amber-600 to-slate-900 text-white border-0 shadow-xl rounded-xl">
         <div className="relative z-10 space-y-2 max-w-2xl">
           <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white border border-white/20 backdrop-blur-md">
             <Sparkles className="h-3 w-3 mr-1 text-amber-300" />
@@ -123,7 +123,7 @@ export default function Page() {
           <h1 className="text-3xl font-extrabold tracking-tight">
             {greeting}, {session?.user?.name || "Admin"}
           </h1>
-          <p className="text-indigo-100 text-sm md:text-base">
+          <p className="text-amber-100 text-sm md:text-base">
             Welcome to <span className="font-semibold">{company?.name || "SecureX AI"}</span>. Manage your workforce, teams, and organizational structure seamlessly.
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function Page() {
           value={usersLoading ? "..." : totalEmployees}
           subtitle="Active directory members"
           icon={<Users className="h-5 w-5" />}
-          iconBg="bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400"
+          iconBg="bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-500"
         />
 
         <V3StatCard
@@ -147,7 +147,7 @@ export default function Page() {
           value={totalTeams}
           subtitle="Configured teams & departments"
           icon={<Building2 className="h-5 w-5" />}
-          iconBg="bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400"
+          iconBg="bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-500"
         />
 
         <V3StatCard
@@ -155,7 +155,7 @@ export default function Page() {
           value="Tree Chart"
           subtitle="Visual manager hierarchy"
           icon={<Network className="h-5 w-5" />}
-          iconBg="bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400"
+          iconBg="bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-500"
         />
 
         <V3StatCard
@@ -172,13 +172,13 @@ export default function Page() {
         <h2 className="text-lg font-bold tracking-tight text-foreground">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link href="/employee">
-            <V3Card className="group cursor-pointer hover:border-indigo-500/50 transition-all p-4">
+            <V3Card className="group cursor-pointer hover:border-amber-500/50 transition-all p-4">
               <div className="flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                   <UserPlus className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm group-hover:text-indigo-600 transition-colors">Employee Directory</h3>
+                  <h3 className="font-semibold text-sm group-hover:text-amber-600 transition-colors">Employee Directory</h3>
                   <p className="text-xs text-muted-foreground">Manage & add employees</p>
                 </div>
               </div>
@@ -186,13 +186,13 @@ export default function Page() {
           </Link>
 
           <Link href="/employee/orgchart">
-            <V3Card className="group cursor-pointer hover:border-violet-500/50 transition-all p-4">
+            <V3Card className="group cursor-pointer hover:border-amber-500/50 transition-all p-4">
               <div className="flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-violet-500/10 text-violet-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                   <Network className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm group-hover:text-violet-600 transition-colors">Org Hierarchy</h3>
+                  <h3 className="font-semibold text-sm group-hover:text-amber-600 transition-colors">Org Hierarchy</h3>
                   <p className="text-xs text-muted-foreground">Explore chart tree</p>
                 </div>
               </div>
@@ -214,13 +214,13 @@ export default function Page() {
           </Link>
 
           <Link href="/chat">
-            <V3Card className="group cursor-pointer hover:border-purple-500/50 transition-all p-4">
+            <V3Card className="group cursor-pointer hover:border-amber-500/50 transition-all p-4">
               <div className="flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                   <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm group-hover:text-purple-600 transition-colors">AI Assistant</h3>
+                  <h3 className="font-semibold text-sm group-hover:text-amber-600 transition-colors">AI Assistant</h3>
                   <p className="text-xs text-muted-foreground">Ask questions & audit</p>
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function Page() {
               <p className="text-xs text-muted-foreground">Latest team members added to your organization</p>
             </div>
             <Link href="/employee">
-              <V3Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700">
+              <V3Button variant="ghost" size="sm" className="text-amber-600 hover:text-amber-700">
                 View All <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </V3Button>
             </Link>
@@ -252,7 +252,7 @@ export default function Page() {
                 {recentUsers.map((user: any) => (
                   <div key={user.id} className="py-3 flex items-center justify-between hover:bg-muted/30 px-2 rounded-lg transition-colors">
                     <div className="flex items-center space-x-3">
-                      <div className="h-9 w-9 rounded-full bg-indigo-500/10 text-indigo-600 font-bold text-xs flex items-center justify-center border border-indigo-500/20">
+                      <div className="h-9 w-9 rounded-full bg-amber-500/10 text-amber-600 font-bold text-xs flex items-center justify-center border border-amber-500/20">
                         {user.name?.[0]?.toUpperCase()}
                       </div>
                       <div>
@@ -287,7 +287,7 @@ export default function Page() {
         <V3Card className="p-5 space-y-4">
           <div className="pb-3 border-b border-border/60">
             <h3 className="text-base font-bold flex items-center gap-2 text-foreground">
-              <Building className="h-4 w-4 text-indigo-600" />
+              <Building className="h-4 w-4 text-amber-600" />
               Organization Identity
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">Company registration & tenant settings</p>

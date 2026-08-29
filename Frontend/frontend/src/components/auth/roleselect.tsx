@@ -105,7 +105,7 @@ export default function RoleSelect() {
                     }}
                     className="flex items-center space-x-2"
                   >
-                    <Building2 className="h-4 w-4 text-indigo-600 shrink-0" />
+                    <Building2 className="h-4 w-4 text-amber-600 shrink-0" />
                     <span>{framework.label}</span>
                     <Check
                       className={cn(

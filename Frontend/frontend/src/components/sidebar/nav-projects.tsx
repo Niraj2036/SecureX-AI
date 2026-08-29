@@ -76,7 +76,7 @@ export function NavProjects({
                 <SidebarMenuButton
                   isActive={isActive}
                   asChild
-                  className="py-2.5 px-3 h-10 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 data-[active=true]:bg-indigo-600 data-[active=true]:text-white font-medium transition-all"
+                  className="py-2.5 px-3 h-10 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 data-[active=true]:bg-amber-600 data-[active=true]:text-white font-medium transition-all"
                 >
                   {isExternal(item.url) ? (
                     <a
@@ -128,7 +128,7 @@ export function NavProjects({
                           pathname === child.url || pathname.startsWith(child.url)
                         }
                         asChild
-                        className="py-2 px-2.5 h-8 rounded-md text-xs text-slate-400 hover:text-white hover:bg-slate-800/60 data-[active=true]:text-indigo-400 data-[active=true]:font-semibold transition-colors"
+                        className="py-2 px-2.5 h-8 rounded-md text-xs text-slate-400 hover:text-white hover:bg-slate-800/60 data-[active=true]:text-amber-500 data-[active=true]:font-semibold transition-colors"
                       >
                         <Link href={child.url}>
                           <span className="whitespace-nowrap">

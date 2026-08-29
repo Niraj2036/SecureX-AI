@@ -65,12 +65,12 @@ const Page = () => {
   const slots = [0, 1, 2, 3, 4, 5];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-amber-950 to-slate-900 p-4">
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-600 shadow-lg shadow-amber-500/30 mb-4">
             <ShieldCheck className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">OTP Verification</h1>
@@ -105,7 +105,7 @@ const Page = () => {
                     }
                   }}
                   id={`otp-slot-${i}`}
-                  className="w-11 h-12 text-center text-lg font-bold rounded-xl bg-white/10 border-2 border-white/20 text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  className="w-11 h-12 text-center text-lg font-bold rounded-xl bg-white/10 border-2 border-white/20 text-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/50 transition-all"
                 />
               ))}
             </div>
@@ -124,7 +124,7 @@ const Page = () => {
             Didn&apos;t receive the code?{" "}
             <button
               type="button"
-              className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors disabled:opacity-50"
+              className="text-amber-500 font-semibold hover:text-amber-400 transition-colors disabled:opacity-50"
               onClick={handleResend}
               disabled={resendOtpMutation.isPending}
             >

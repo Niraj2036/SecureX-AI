@@ -545,17 +545,17 @@ const UserTemplateTables = ({ user, type }: UserTemplateTablesProps) => {
               pageRangeDisplayed={3}
               onPageChange={onPageChange}
               containerClassName="flex justify-between items-center w-[250px] mx-auto"
-              pageClassName="px-3 py-2 text-black hover:text-indigo-600"
-              activeClassName="bg-indigo-600 text-white rounded-md"
+              pageClassName="px-3 py-2 text-black hover:text-amber-600"
+              activeClassName="bg-amber-600 text-white rounded-md"
               previousClassName={`px-3 py-2 ${
                 currentPage === 1
                   ? "text-gray-400"
-                  : "text-black hover:text-indigo-600"
+                  : "text-black hover:text-amber-600"
               }`}
               nextClassName={`px-3 py-2 ${
                 currentPage === formData.pagination.totalPages
                   ? "text-gray-400"
-                  : "text-black hover:text-indigo-600"
+                  : "text-black hover:text-amber-600"
               }`}
               disabledClassName="text-gray-400"
             />

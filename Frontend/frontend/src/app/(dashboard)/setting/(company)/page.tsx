@@ -342,7 +342,7 @@ const SettingsPage = () => {
   return (
     <V3Card className="w-full max-w-4xl p-6">
       <div className="p-0 pb-4 flex items-center gap-2">
-        <Building className="h-5 w-5 text-indigo-600" />
+        <Building className="h-5 w-5 text-amber-600" />
         <h2 className="text-xl font-bold">Company Identity / {companyName || "Organization"}</h2>
       </div>
       <div className="border-t border-border/60 mb-4" />
@@ -364,7 +364,7 @@ const SettingsPage = () => {
                         {...field}
                         placeholder="Enter your company name"
                         disabled={userRole === "employee"}
-                        className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted"
+                        className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all disabled:opacity-60 disabled:bg-muted"
                       />
                     )}
                   />
@@ -389,7 +389,7 @@ const SettingsPage = () => {
                               !field.value && "text-muted-foreground"
                             )}
                           >
-                            <CalendarDays className="mr-2 h-4 w-4 text-indigo-600" />
+                            <CalendarDays className="mr-2 h-4 w-4 text-amber-600" />
                             {field.value ? moment(field.value).format("DD/MM/YYYY") : <span>DD/MM/YYYY</span>}
                           </button>
                         </PopoverTrigger>
@@ -411,28 +411,28 @@ const SettingsPage = () => {
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Street Address <span className="text-rose-500">*</span></label>
                   <Controller name="streetAddress" control={control} render={({ field }) => (
-                    <input {...field} placeholder="Enter street address" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input {...field} placeholder="Enter street address" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.streetAddress && <p className="text-rose-500 text-[11px] mt-1">{errors.streetAddress.message}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Street Number <span className="text-rose-500">*</span></label>
                   <Controller name="streetNumber" control={control} render={({ field }) => (
-                    <input type="number" {...field} onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(parseInt(e.target.value))} value={field.value ?? ""} placeholder="Enter street number" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input type="number" {...field} onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(parseInt(e.target.value))} value={field.value ?? ""} placeholder="Enter street number" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.streetNumber && <p className="text-rose-500 text-[11px] mt-1">{errors.streetNumber.message}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">City <span className="text-rose-500">*</span></label>
                   <Controller name="city" control={control} render={({ field }) => (
-                    <input {...field} placeholder="Enter city name" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input {...field} placeholder="Enter city name" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.city && <p className="text-rose-500 text-[11px] mt-1">{errors.city.message}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Country <span className="text-rose-500">*</span></label>
                   <Controller name="country" control={control} render={({ field }) => (
-                    <select value={field.value} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted">
+                    <select value={field.value} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted">
                       <option value="">Select country</option>
                       {data.map((country) => <option key={country.code} value={country.code}>{country.name}</option>)}
                     </select>
@@ -442,7 +442,7 @@ const SettingsPage = () => {
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Zip Code <span className="text-rose-500">*</span></label>
                   <Controller name="zipCode" control={control} render={({ field }) => (
-                    <input type="number" {...field} onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(parseInt(e.target.value))} value={field.value ?? ""} placeholder="Enter Zip Code" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input type="number" {...field} onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(parseInt(e.target.value))} value={field.value ?? ""} placeholder="Enter Zip Code" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.zipCode && <p className="text-rose-500 text-[11px] mt-1">{errors.zipCode.message}</p>}
                 </div>
@@ -455,14 +455,14 @@ const SettingsPage = () => {
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Billing Email <span className="text-rose-500">*</span></label>
                   <Controller name="billingEmail" control={control} render={({ field }) => (
-                    <input {...field} placeholder="Enter Billing Email" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input {...field} placeholder="Enter Billing Email" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.billingEmail && <p className="text-rose-500 text-[11px] mt-1">{errors.billingEmail.message}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Contact Person <span className="text-rose-500">*</span></label>
                   <Controller name="contactPerson" control={control} render={({ field }) => (
-                    <input {...field} placeholder="Enter Name of Contact Person" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input {...field} placeholder="Enter Name of Contact Person" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.contactPerson && <p className="text-rose-500 text-[11px] mt-1">{errors.contactPerson.message}</p>}
                 </div>
@@ -475,7 +475,7 @@ const SettingsPage = () => {
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Currency <span className="text-rose-500">*</span></label>
                   <Controller name="currency" control={control} render={({ field }) => (
-                    <select value={field.value} onChange={e => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted">
+                    <select value={field.value} onChange={e => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted">
                       <option value="">Select currency</option>
                       {currencyList.map((c) => <option key={c.code} value={c.code}>{c.code} - {c.currency}</option>)}
                     </select>
@@ -484,7 +484,7 @@ const SettingsPage = () => {
                 <div>
                   <label className="text-xs font-semibold text-foreground block mb-1">Tax ID No. <span className="text-rose-500">*</span></label>
                   <Controller name="vatNumber" control={control} render={({ field }) => (
-                    <input {...field} placeholder="Enter VAT Number" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted" />
+                    <input {...field} placeholder="Enter VAT Number" disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted" />
                   )} />
                   {errors.vatNumber && <p className="text-rose-500 text-[11px] mt-1">{errors.vatNumber.message}</p>}
                 </div>
@@ -497,7 +497,7 @@ const SettingsPage = () => {
                 <div className="flex flex-col">
                   <label className="text-xs font-semibold text-foreground block mb-1">Default Language <span className="text-rose-500">*</span></label>
                   <Controller name="defaultLanguage" control={control} render={({ field }) => (
-                    <select value={field.value} onChange={e => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:bg-muted">
+                    <select value={field.value} onChange={e => field.onChange(e.target.value)} disabled={userRole === "employee"} className="w-full h-9 rounded-lg border border-border/80 bg-background px-3 text-xs mt-1 text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all disabled:opacity-60 disabled:bg-muted">
                       <option value="">Select language</option>
                       {languageOptions.map((lang) => <option key={lang.code} value={lang.code || lang.name}>{lang.name}</option>)}
                     </select>
@@ -539,7 +539,7 @@ const SettingsPage = () => {
                       aria-checked={whitelabel}
                       onClick={() => { setWhitelabel(!whitelabel); handleWhiteLabelMutation.mutate(); }}
                       disabled={userRole === "employee"}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 ${whitelabel ? "bg-indigo-600" : "bg-muted-foreground/30"} disabled:opacity-50`}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 ${whitelabel ? "bg-amber-600" : "bg-muted-foreground/30"} disabled:opacity-50`}
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${whitelabel ? "translate-x-4" : "translate-x-0.5"}`} />
                     </button>

@@ -99,15 +99,15 @@ const AcceptInvitePage = () => {
     const slots = [0, 1, 2, 3, 4, 5];
 
     const authCardClass = "bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl";
-    const bgClass = "min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-4";
-    const inputClass = "w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all";
+    const bgClass = "min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-amber-950 to-slate-900 p-4";
+    const inputClass = "w-full h-10 pl-9 pr-3 rounded-lg bg-white/10 border border-white/20 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all";
 
     if (showOtpPage) {
         return (
             <div className={bgClass}>
                 <div className="relative w-full max-w-md">
                     <div className="text-center mb-8">
-                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-600 shadow-lg shadow-amber-500/30 mb-4">
                             <ShieldCheck className="w-7 h-7 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-white tracking-tight">OTP Verification</h1>
@@ -133,7 +133,7 @@ const AcceptInvitePage = () => {
                                             if (e.key === "Backspace" && !value[i] && i > 0) document.getElementById(`invite-otp-${i - 1}`)?.focus();
                                         }}
                                         id={`invite-otp-${i}`}
-                                        className="w-11 h-12 text-center text-lg font-bold rounded-xl bg-white/10 border-2 border-white/20 text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        className="w-11 h-12 text-center text-lg font-bold rounded-xl bg-white/10 border-2 border-white/20 text-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/50 transition-all"
                                     />
                                 ))}
                             </div>
@@ -144,7 +144,7 @@ const AcceptInvitePage = () => {
                         </form>
                         <p className="text-center text-slate-400 text-sm mt-5">
                             Didn&apos;t receive?{" "}
-                            <button type="button" className="text-indigo-400 font-semibold hover:text-indigo-300" onClick={handleResend} disabled={sendOtpMutation.isPending}>
+                            <button type="button" className="text-amber-500 font-semibold hover:text-amber-400" onClick={handleResend} disabled={sendOtpMutation.isPending}>
                                 {sendOtpMutation.isPending ? "Resending..." : "Resend"}
                             </button>
                         </p>
@@ -159,7 +159,7 @@ const AcceptInvitePage = () => {
             <div className={bgClass}>
                 <div className="relative w-full max-w-md">
                     <div className="text-center mb-8">
-                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-600 shadow-lg shadow-amber-500/30 mb-4">
                             <Lock className="w-7 h-7 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-white tracking-tight">Set Your Password</h1>
@@ -214,7 +214,7 @@ const AcceptInvitePage = () => {
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
             <div className="relative w-full max-w-md">
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-500/30 mb-4">
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-600 shadow-lg shadow-amber-500/30 mb-4">
                         <ShieldCheck className="w-7 h-7 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-white tracking-tight">Accept Invitation</h1>
@@ -235,7 +235,7 @@ const AcceptInvitePage = () => {
 
                     <p className="text-center text-slate-400 text-sm mt-5">
                         Don&apos;t have an account?{" "}
-                        <a href="/auth/signup" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+                        <a href="/auth/signup" className="text-amber-500 font-semibold hover:text-amber-400 transition-colors">
                             Create Account
                         </a>
                     </p>

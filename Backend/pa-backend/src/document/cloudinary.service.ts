@@ -19,7 +19,7 @@ export class CloudinaryService {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,
-          resource_type: 'auto',
+          resource_type: 'raw',
           allowed_formats: ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'xlsx', 'csv', 'txt'],
           max_file_size: 10 * 1024 * 1024, // 10MB
         },

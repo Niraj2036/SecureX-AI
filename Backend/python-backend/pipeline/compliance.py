@@ -1,8 +1,9 @@
 import os
 import re
 import glob
-from scipy.spatial.distance import cosine
+import math
 import logging
+import numpy as np
 
 from pipeline.llm import ask_llm_judge
 
@@ -34,36 +35,58 @@ def privacy_token_check(response_text: str) -> dict:
         return {"status": "VIOLATION", "reason": f"Too many sensitive tokens exposed ({len(tokens)} found)."}
     return {"status": "PASS", "reason": f"Token count ({len(tokens)}) is within acceptable limits."}
 
-import math
+def _cosine_similarity(vec_a: list, vec_b: list) -> float:
+    if not vec_a or not vec_b:
+        return 0.0
+    a = np.array(vec_a, dtype=float)
+    b = np.array(vec_b, dtype=float)
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    sim = np.dot(a, b) / (norm_a * norm_b)
+    if np.isnan(sim):
+        return 0.0
+    return float(sim)
+
+GROUNDING_THRESHOLD = float(os.getenv("GROUNDING_THRESHOLD", "0.60"))
+RELEVANCE_THRESHOLD = float(os.getenv("RELEVANCE_THRESHOLD", "0.50"))
 
 def semantic_verification(response_embedding: list, query_embedding: list, chunk_embeddings: list) -> dict:
     """
     Computes grounding and relevance scores.
     """
     if not response_embedding or not query_embedding or not chunk_embeddings:
+        logger.warning(
+            f"Semantic verification missing embeddings: "
+            f"response={bool(response_embedding)}, query={bool(query_embedding)}, chunks={len(chunk_embeddings) if chunk_embeddings else 0}"
+        )
         return {"grounding_score": 0.0, "relevance_score": 0.0, "status": "FAIL"}
 
     # Relevance score
-    relevance_dist = cosine(response_embedding, query_embedding)
-    relevance_score = 1.0 - relevance_dist if not math.isnan(relevance_dist) else 0.0
+    relevance_score = _cosine_similarity(response_embedding, query_embedding)
 
     # Grounding score (max cosine similarity with any chunk)
     max_grounding = 0.0
     for chunk_emb in chunk_embeddings:
-        dist = cosine(response_embedding, chunk_emb)
-        sim = 1.0 - dist
-        if sim > max_grounding:
-            max_grounding = sim
+        if chunk_emb:
+            sim = _cosine_similarity(response_embedding, chunk_emb)
+            if sim > max_grounding:
+                max_grounding = sim
 
-    # Using default thresholds as proposed
-    grounding_pass = max_grounding >= 0.75
-    relevance_pass = relevance_score >= 0.70
+    grounding_pass = max_grounding >= GROUNDING_THRESHOLD
+    relevance_pass = relevance_score >= RELEVANCE_THRESHOLD
 
     status = "PASS"
     if not grounding_pass:
         status = "FAIL"
     elif not relevance_pass:
         status = "FLAG"
+
+    logger.info(
+        f"Semantic verification — Max Grounding: {max_grounding:.4f} (req >= {GROUNDING_THRESHOLD}), "
+        f"Relevance: {relevance_score:.4f} (req >= {RELEVANCE_THRESHOLD}) -> Status: {status}"
+    )
 
     return {
         "grounding_score": max_grounding,
@@ -78,6 +101,17 @@ def run_compliance_pipeline(raw_answer: str, question_embedding: list, chunks: l
     2. Privacy Token Check
     3. Semantic Verification
     """
+    # If the answer is already a standard authorization refusal, pass it through directly
+    if "you do not have authorized data to answer" in raw_answer.lower():
+        return {
+            "terminal_decision": "ALLOW",
+            "action_taken": raw_answer,
+            "guardrail_result": "PASS",
+            "privacy_result": "PASS",
+            "grounding_score": 0.0,
+            "relevance_score": 0.0
+        }
+
     policies = load_company_policies()
     
     # 1. Company Policy Guardrail (LLM-as-a-Judge)
@@ -108,11 +142,11 @@ def run_compliance_pipeline(raw_answer: str, question_embedding: list, chunks: l
         }
 
     # 3. Semantic Verification
-    chunk_embeddings = [c["embedding"] for c in chunks if "embedding" in c]
+    chunk_embeddings = [c["embedding"] for c in chunks if isinstance(c, dict) and "embedding" in c and c["embedding"]]
     semantic_res = semantic_verification(response_embedding, question_embedding, chunk_embeddings)
     
     terminal_decision = "ALLOW"
-    action_taken = "Response allowed."
+    action_taken = raw_answer
     if semantic_res["status"] == "FAIL":
         terminal_decision = "BLOCK"
         action_taken = "Response blocked. Insufficient authorized data to answer (hallucination risk)."

@@ -65,6 +65,7 @@ def retrieve_chunks(query_embedding: List[float], authorized_doc_ids: List[str],
                 "chunk_id": 1,
                 "doc_id": 1,
                 "text": 1,
+                "embedding": 1,
                 "score": { "$meta": "vectorSearchScore" }
             }
         }
@@ -78,5 +79,5 @@ def retrieve_chunks(query_embedding: List[float], authorized_doc_ids: List[str],
         # Fallback to standard match if vector index doesn't exist yet (for testing)
         # Note: Standard match won't sort by similarity!
         logger.warning("Falling back to standard find (no semantic similarity)")
-        fallback_docs = list(col.find({"doc_id": {"$in": authorized_doc_ids}}, {"_id": 0, "text": 1, "doc_id": 1, "chunk_id": 1}).limit(limit))
+        fallback_docs = list(col.find({"doc_id": {"$in": authorized_doc_ids}}, {"_id": 0, "text": 1, "doc_id": 1, "chunk_id": 1, "embedding": 1}).limit(limit))
         return fallback_docs

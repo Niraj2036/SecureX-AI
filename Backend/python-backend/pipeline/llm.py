@@ -29,7 +29,7 @@ QUESTION:
     if not OPENROUTER_API_KEY:
         logger.warning("OPENROUTER_API_KEY not set. Returning prompt instead of calling LLM.")
         return f"[MOCK LLM RESPONSE - Set OPENROUTER_API_KEY to connect to real model]\n\nBased on the context, here is the answer to: {question}"
-
+    print(prompt)
     try:
         headers = {
             "Content-Type": "application/json",

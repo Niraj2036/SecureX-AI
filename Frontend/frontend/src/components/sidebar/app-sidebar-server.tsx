@@ -15,27 +15,27 @@ export default async function AppSidebarServer(props: any) {
       },
       ...(userRole && userRole !== "employee"
         ? [
-            {
-              name: "Employee Directory",
-              url: "/employee",
-              icon: "SquareUserRound",
-            },
-            {
-              name: "Teams",
-              url: "/team",
-              icon: "Users",
-            },
-            {
-              name: "Org Chart",
-              url: "/org",
-              icon: "Network",
-            },
-            {
-              name: "Chat",
-              url: "/chat",
-              icon: "MessageCircle",
-            },
-          ]
+          {
+            name: "Employee Directory",
+            url: "/employee",
+            icon: "SquareUserRound",
+          },
+          {
+            name: "Teams",
+            url: "/team",
+            icon: "Users",
+          },
+          {
+            name: "Org Chart",
+            url: "/org",
+            icon: "Network",
+          },
+          {
+            name: "Chat",
+            url: "/chat",
+            icon: "MessageCircle",
+          },
+        ]
         : []),
       {
         name: "Documents",

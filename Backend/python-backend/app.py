@@ -79,6 +79,14 @@ def query():
             # User has no documents, skip embedding and vector search
             answer = "You do not have authorized data to answer the question."
             chunks = []
+            compliance_result = {
+                "terminal_decision": "ALLOW",
+                "action_taken": answer,
+                "guardrail_result": "PASS",
+                "privacy_result": "PASS",
+                "grounding_score": 0.0,
+                "relevance_score": 0.0
+            }
         else:
             # 2. Anonymize query and embed
             from pipeline.anonymizer import anonymize_query, deanonymize_text
@@ -98,10 +106,11 @@ def query():
             from pipeline.llm import generate_answer
             raw_answer = generate_answer(anonymized_question, chunks)
             
-            # 5. Run Compliance Pipeline
+            # 5. Compliance pipeline check (Guardrails, Privacy tokens, Semantic grounding)
             from pipeline.compliance import run_compliance_pipeline
-            req_id_ans = f"ans_{uuid.uuid4().hex[:8]}"
-            response_embeddings = embed_texts([raw_answer], req_id_ans)
+            
+            ans_req_id = f"ans_{uuid.uuid4().hex[:8]}"
+            response_embeddings = embed_texts([raw_answer], ans_req_id)
             response_embedding = response_embeddings[0] if response_embeddings else []
             
             compliance_result = run_compliance_pipeline(
@@ -112,22 +121,23 @@ def query():
                 response_embedding=response_embedding
             )
             
-            from pipeline.anonymizer import deanonymize_text
-            if compliance_result["terminal_decision"] == "BLOCK":
-                answer = compliance_result["action_taken"]
+            # Apply compliance decision
+            if compliance_result.get("terminal_decision") == "BLOCK":
+                answer = compliance_result.get("action_taken", "Response blocked due to compliance violation.")
+            elif compliance_result.get("terminal_decision") == "FLAG":
+                answer = deanonymize_text(compliance_result.get("action_taken", raw_answer))
             else:
                 answer = deanonymize_text(raw_answer)
-                if compliance_result["terminal_decision"] == "FLAG":
-                    answer = f"{compliance_result['action_taken']}\n\n{answer}"
             
         # 6. Log audit
         from pipeline.auditor import log_query
-        query_id = log_query(user, question, answer, chunks, compliance_result if authorized_doc_ids else None)
+        query_id = log_query(user, question, answer, chunks, compliance_result)
         
         return jsonify({
             "query_id": query_id,
             "answer": answer,
-            "sources": [{"chunk_id": c.get("chunk_id"), "doc_id": c.get("doc_id")} for c in chunks]
+            "sources": [{"chunk_id": c.get("chunk_id"), "doc_id": c.get("doc_id")} for c in chunks],
+            "compliance": compliance_result
         }), 200
 
     except Exception as e:
